@@ -45,12 +45,15 @@ namespace Parasite
 		{
 			return GetCategoryFlags() & InCategory;
 		}
+
+		inline const bool IsHandled() const { return bHandled; }
+
 	protected:
-		bool IsHandled = false;
+		bool bHandled = false;
 	};
 
 
-	class CEventDispatcher
+	class PARASITE_API CEventDispatcher
 	{
 		template<typename T>
 		using EventFunc = std::function<bool(T&)>;
@@ -66,7 +69,7 @@ namespace Parasite
 		{
 			if (Event.GetEventType() == T::GetStaticType())
 			{
-				Event.IsHandled = InFunc(*(T*)&Event);
+				Event.bHandled = InFunc(*(T*)&Event);
 				return true;
 			}
 			return false;

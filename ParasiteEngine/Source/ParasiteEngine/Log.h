@@ -33,4 +33,4 @@ namespace Parasite
 #define PE_ERROR(...)          ::Parasite::CLog::GetClientLogger()->error(__VA_ARGS__)
 #define PE_WARN(...)           ::Parasite::CLog::GetClientLogger()->warn(__VA_ARGS__)
 #define PE_INFO(...)           ::Parasite::CLog::GetClientLogger()->info(__VA_ARGS__)
-#define PE_TRACE(...)          ::Parasite::CLog::GetClientLogger()->trace(__VA_ARGS__)
+#define PE_LOG(...)          ::Parasite::CLog::GetClientLogger()->trace(__VA_ARGS__)

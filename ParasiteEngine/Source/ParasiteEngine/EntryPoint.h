@@ -1,9 +1,11 @@
 #pragma once
 
+#include "Application.h" 
 
 #ifdef PE_PLATFORM_WINDOWS
 
-extern Parasite::CApplication* Parasite::CreateApplication();
+
+extern Parasite::CApplication* CreateApplication();
 
 int main(int argc, char** argv)
 {

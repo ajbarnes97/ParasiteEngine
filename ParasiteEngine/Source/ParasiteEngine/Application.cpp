@@ -4,6 +4,7 @@
 #include "ParasiteEngine/Log.h"
 
 #include "GLFW/glfw3.h"
+#include "Events/Event.h"
 
 
 namespace Parasite
@@ -25,6 +26,11 @@ namespace Parasite
 			glClearColor(1, 0, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 
+			for (CLayer* Layer : LayerStack)
+			{
+				Layer->OnUpdate();
+			}
+
 			Window->Update();
 		}
 	}
@@ -35,6 +41,28 @@ namespace Parasite
 		EventDispatcher.Dispatch<CWindowCloseEvent>(std::bind(&CApplication::OnWindowClose, this, std::placeholders::_1));
 
 		PE_CORE_LOG("Event: {}", InEvent.ToString());
+	
+		for (auto It = LayerStack.end(); It != LayerStack.begin(); )
+		{
+			if (CLayer * Layer = *--It)
+			{
+				Layer->OnEvent(InEvent);
+				if (InEvent.IsHandled())
+				{
+					break;
+				}
+			}
+		}
+	}
+
+	void CApplication::PushLayer(CLayer* InLayer)
+	{
+		LayerStack.PushLayer(InLayer);
+	}
+
+	void CApplication::PushOverlay(CLayer* InOverlay)
+	{
+		LayerStack.PushOverlay(InOverlay);
 	}
 
 	bool CApplication::OnWindowClose(CWindowCloseEvent& InWindowCloseEvent)

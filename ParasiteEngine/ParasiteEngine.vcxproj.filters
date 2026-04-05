@@ -34,6 +34,12 @@
     <ClInclude Include="Source\ParasiteEngine\Events\MouseEvents.h">
       <Filter>ParasiteEngine\Events</Filter>
     </ClInclude>
+    <ClInclude Include="Source\ParasiteEngine\Layer.h">
+      <Filter>ParasiteEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ParasiteEngine\LayerStack.h">
+      <Filter>ParasiteEngine</Filter>
+    </ClInclude>
     <ClInclude Include="Source\ParasiteEngine\Log.h">
       <Filter>ParasiteEngine</Filter>
     </ClInclude>
@@ -47,6 +53,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\ParasiteEngine\Application.cpp">
+      <Filter>ParasiteEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ParasiteEngine\Layer.cpp">
+      <Filter>ParasiteEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ParasiteEngine\LayerStack.cpp">
       <Filter>ParasiteEngine</Filter>
     </ClCompile>
     <ClCompile Include="Source\ParasiteEngine\Log.cpp">

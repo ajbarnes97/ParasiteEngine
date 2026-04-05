@@ -84,7 +84,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /MDd %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
@@ -114,7 +114,7 @@ copy /B /Y ..\bin\Debug-windows-x86_64\ParasiteEngine\ParasiteEngine.dll ..\bin\
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /MD %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
@@ -145,7 +145,7 @@ copy /B /Y ..\bin\Release-windows-x86_64\ParasiteEngine\ParasiteEngine.dll ..\bi
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /MD %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
@@ -172,6 +172,8 @@ copy /B /Y ..\bin\Dist-windows-x86_64\ParasiteEngine\ParasiteEngine.dll ..\bin\D
     <ClInclude Include="Source\ParasiteEngine\Events\Event.h" />
     <ClInclude Include="Source\ParasiteEngine\Events\KeyEvent.h" />
     <ClInclude Include="Source\ParasiteEngine\Events\MouseEvents.h" />
+    <ClInclude Include="Source\ParasiteEngine\Layer.h" />
+    <ClInclude Include="Source\ParasiteEngine\LayerStack.h" />
     <ClInclude Include="Source\ParasiteEngine\Log.h" />
     <ClInclude Include="Source\ParasiteEngine\Platform\WindowsWindow.h" />
     <ClInclude Include="Source\ParasiteEngine\Window.h" />
@@ -179,6 +181,8 @@ copy /B /Y ..\bin\Dist-windows-x86_64\ParasiteEngine\ParasiteEngine.dll ..\bin\D
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\ParasiteEngine\Application.cpp" />
+    <ClCompile Include="Source\ParasiteEngine\Layer.cpp" />
+    <ClCompile Include="Source\ParasiteEngine\LayerStack.cpp" />
     <ClCompile Include="Source\ParasiteEngine\Log.cpp" />
     <ClCompile Include="Source\ParasiteEngine\Platform\WindowsWindow.cpp" />
     <ClCompile Include="Source\pepch.cpp">

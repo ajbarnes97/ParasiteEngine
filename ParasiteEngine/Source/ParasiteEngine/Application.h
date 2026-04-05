@@ -3,6 +3,8 @@
 #include "Core.h"
 #include "Window.h"
 #include "ParasiteEngine/Events/ApplicationEvent.h"
+#include "ParasiteEngine/LayerStack.h"
+
 
 namespace Parasite
 {
@@ -15,10 +17,15 @@ namespace Parasite
 		void Run();
 		void OnEvent(CEvent& InEvent);
 
+		void PushLayer(CLayer* InLayer);
+		void PushOverlay(CLayer* InOverlay);
+
 	private:
 		bool OnWindowClose(CWindowCloseEvent& InWindowCloseEvent);
 
 	private:
+		CLayerStack LayerStack;
+
 		std::unique_ptr<CWindow> Window;
 		bool bRunning = true;
 	};
