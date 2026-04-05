@@ -1,16 +1,17 @@
 #include "pepch.h"
 #include "Application.h"
 
-#include "ParasiteEngine/Events/ApplicationEvent.h"
 #include "ParasiteEngine/Log.h"
 
 #include "GLFW/glfw3.h"
+
 
 namespace Parasite
 {
 	CApplication::CApplication()
 	{
 		Window = std::unique_ptr<CWindow>(CWindow::Create());
+		Window->SetEventCallback(std::bind(&CApplication::OnEvent, this, std::placeholders::_1));
 	}
 
 	CApplication::~CApplication()
@@ -26,5 +27,19 @@ namespace Parasite
 
 			Window->Update();
 		}
+	}
+
+	void CApplication::OnEvent(CEvent& InEvent)
+	{
+		CEventDispatcher EventDispatcher(InEvent);
+		EventDispatcher.Dispatch<CWindowCloseEvent>(std::bind(&CApplication::OnWindowClose, this, std::placeholders::_1));
+
+		PE_CORE_LOG("Event: {}", InEvent.ToString());
+	}
+
+	bool CApplication::OnWindowClose(CWindowCloseEvent& InWindowCloseEvent)
+	{
+		bRunning = false;
+		return true;
 	}
 }

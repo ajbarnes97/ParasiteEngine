@@ -2,6 +2,7 @@
 
 #include "Core.h"
 #include "Window.h"
+#include "ParasiteEngine/Events/ApplicationEvent.h"
 
 namespace Parasite
 {
@@ -12,6 +13,10 @@ namespace Parasite
 		virtual ~CApplication();
 
 		void Run();
+		void OnEvent(CEvent& InEvent);
+
+	private:
+		bool OnWindowClose(CWindowCloseEvent& InWindowCloseEvent);
 
 	private:
 		std::unique_ptr<CWindow> Window;

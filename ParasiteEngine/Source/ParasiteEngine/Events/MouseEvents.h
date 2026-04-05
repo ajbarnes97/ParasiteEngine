@@ -6,10 +6,10 @@
 
 namespace Parasite
 {
-	class PARASITE_API MouseMoveEvent : public Event
+	class PARASITE_API CMouseMoveEvent : public CEvent
 	{
 	public:
-		MouseMoveEvent(float InX, float InY)
+		CMouseMoveEvent(float InX, float InY)
 			: MouseX(InX),
 				MouseY(InY)
 		{
@@ -33,9 +33,10 @@ namespace Parasite
 	};
 
 
-	class PARASITE_API MouseScrollEvent : public Event
+	class PARASITE_API CMouseScrollEvent : public CEvent
 	{
-		MouseScrollEvent(float InXOffset, float InYOffset)
+	public:
+		CMouseScrollEvent(float InXOffset, float InYOffset)
 			: XOffset(InXOffset),
 				YOffset(InYOffset)
 		{
@@ -59,7 +60,7 @@ namespace Parasite
 	};
 
 
-	class PARASITE_API MouseButtonEvent : public Event
+	class PARASITE_API CMouseButtonEvent : public CEvent
 	{
 	public:
 		inline int GetMouseButton() const { return Button; }
@@ -67,7 +68,7 @@ namespace Parasite
 		EVENT_CLASS_CATEGORY(CategoryInput | CategoryMouse)
 
 	protected:
-		MouseButtonEvent(int InButton)
+		CMouseButtonEvent(int InButton)
 			: Button(InButton)
 		{
 		}
@@ -77,11 +78,11 @@ namespace Parasite
 	};
 
 
-	class PARASITE_API MousePressedEvent : public MouseButtonEvent
+	class PARASITE_API CMousePressedEvent : public CMouseButtonEvent
 	{
 	public:
-		MousePressedEvent(int InButton)
-			: MouseButtonEvent(InButton)
+		CMousePressedEvent(int InButton)
+			: CMouseButtonEvent(InButton)
 		{
 		}
 
@@ -94,11 +95,11 @@ namespace Parasite
 	};
 
 
-	class PARASITE_API MouseReleasedEvent : public MouseButtonEvent
+	class PARASITE_API CMouseReleasedEvent : public CMouseButtonEvent
 	{
 	public:
-		MouseReleasedEvent(int InButton)
-			: MouseButtonEvent(InButton)
+		CMouseReleasedEvent(int InButton)
+			: CMouseButtonEvent(InButton)
 		{
 		}
 

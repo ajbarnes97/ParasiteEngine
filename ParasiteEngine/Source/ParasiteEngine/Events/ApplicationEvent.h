@@ -5,10 +5,10 @@
 
 namespace Parasite
 {
-	class PARASITE_API WindowResizeEvent : public Event
+	class PARASITE_API CWindowResizeEvent : public CEvent
 	{
 	public:
-		WindowResizeEvent(unsigned int InWindowWidth, unsigned int InWindowHeight)
+		CWindowResizeEvent(unsigned int InWindowWidth, unsigned int InWindowHeight)
 			: WindowWidth(InWindowWidth),
 			  WindowHeight(InWindowHeight)
 		{
@@ -28,5 +28,20 @@ namespace Parasite
 		EVENT_CLASS_CATEGORY(CategoryApplication);
 	private:
 		unsigned int WindowWidth, WindowHeight;
+	};
+
+
+	class PARASITE_API CWindowCloseEvent : public CEvent
+	{
+	public:
+		CWindowCloseEvent() = default;
+
+		virtual std::string ToString() const override
+		{
+			return "Window Close Event";
+		}
+
+		EVENT_CLASS_TYPE(WindowClose);
+		EVENT_CLASS_CATEGORY(CategoryApplication);
 	};
 }

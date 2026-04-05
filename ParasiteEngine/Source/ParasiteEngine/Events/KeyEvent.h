@@ -6,7 +6,7 @@
 
 namespace Parasite
 {
-	class PARASITE_API KeyEvent : public Event
+	class PARASITE_API CKeyEvent : public CEvent
 	{
 	public:
 		inline int GetKeyCode() const { return KeyCode; }
@@ -14,7 +14,7 @@ namespace Parasite
 		EVENT_CLASS_CATEGORY(CategoryInput | CategoryKeyboard)
 
 	protected:
-		KeyEvent(int InKeyCode)
+		CKeyEvent(int InKeyCode)
 			: KeyCode(InKeyCode)
 		{
 		}
@@ -24,11 +24,11 @@ namespace Parasite
 	};
 
 
-	class PARASITE_API PressedKeyEvent : public KeyEvent
+	class PARASITE_API CPressedKeyEvent : public CKeyEvent
 	{
 	public:
-		PressedKeyEvent(int InKeyCode, int InRepeatCount)
-			: KeyEvent(InKeyCode),
+		CPressedKeyEvent(int InKeyCode, int InRepeatCount)
+			: CKeyEvent(InKeyCode),
 				RepeatCount(InRepeatCount)
 		{
 		}
@@ -42,18 +42,18 @@ namespace Parasite
 			return SS.str();
 		}
 
-		EVENT_CLASS_CATEGORY(CategoryKeyPressed);
+		EVENT_CLASS_TYPE(KeyPressed);
 
 	private:
 		int RepeatCount = 0;
 	};
 
 
-	class PARASITE_API ReleasedKeyEvent : public KeyEvent
+	class PARASITE_API CReleasedKeyEvent : public CKeyEvent
 	{
 	public:
-		ReleasedKeyEvent(int InKeyCode)
-			: KeyEvent(InKeyCode)
+		CReleasedKeyEvent(int InKeyCode)
+			: CKeyEvent(InKeyCode)
 		{
 		}
 
@@ -62,6 +62,6 @@ namespace Parasite
 			return "Released Key Event";
 		}
 
-		EVENT_CLASS_CATEGORY(CategoryKeyReleased);
+		EVENT_CLASS_TYPE(KeyReleased);
 	};
 }

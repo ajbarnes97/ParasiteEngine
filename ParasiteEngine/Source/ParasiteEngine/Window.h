@@ -32,7 +32,7 @@ namespace Parasite
 	class PARASITE_API CWindow
 	{
 	public:
-		using EventCallbackFunc = std::function<void(Event&)>;
+		using EventCallbackFunc = std::function<void(CEvent&)>;
 
 		virtual ~CWindow() {};
 

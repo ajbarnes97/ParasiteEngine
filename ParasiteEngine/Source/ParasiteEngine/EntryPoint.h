@@ -7,7 +7,7 @@ extern Parasite::CApplication* Parasite::CreateApplication();
 
 int main(int argc, char** argv)
 {
-	Parasite::Log::Init();
+	Parasite::CLog::Init();
 
 	auto app = Parasite::CreateApplication();
 	app->Run();

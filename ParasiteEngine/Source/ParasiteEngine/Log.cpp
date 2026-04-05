@@ -6,10 +6,10 @@
 
 namespace Parasite
 {
-	std::shared_ptr<spdlog::logger> Log::s_CoreLogger;
-	std::shared_ptr<spdlog::logger> Log::s_ClientLogger;
+	std::shared_ptr<spdlog::logger> CLog::s_CoreLogger;
+	std::shared_ptr<spdlog::logger> CLog::s_ClientLogger;
 
-	void Log::Init()
+	void CLog::Init()
 	{
 		spdlog::set_pattern("%^[%T] %n: %n: %v%$");
 

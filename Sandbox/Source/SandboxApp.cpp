@@ -1,14 +1,15 @@
 #include "ParasiteEngine.h"
 
-class Sandbox : public Parasite::CApplication
+
+class CSandbox : public Parasite::CApplication
 {
 public:
-	Sandbox()
+	CSandbox()
 	{
 
 	}
 
-	~Sandbox()
+	~CSandbox()
 	{
 
 	}
@@ -16,5 +17,5 @@ public:
 
 Parasite::CApplication* Parasite::CreateApplication()
 {
-	return new Sandbox();
+	return new CSandbox();
 }

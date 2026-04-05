@@ -31,9 +31,9 @@ namespace Parasite
 #define EVENT_CLASS_CATEGORY(InCategory) virtual int GetCategoryFlags() const { return InCategory; }
 
 
-	class Event
+	class PARASITE_API CEvent
 	{
-		friend class EventDispatcher;
+		friend class CEventDispatcher;
 
 	public:
 		virtual EEventType GetEventType() const = 0;
@@ -50,13 +50,14 @@ namespace Parasite
 	};
 
 
-	class EventDispatcher
+	class CEventDispatcher
 	{
 		template<typename T>
 		using EventFunc = std::function<bool(T&)>;
 
 	public:
-		EventDispatcher(EEventType& InEvent) : Event(InEvent) 
+		CEventDispatcher(CEvent& InEvent)
+			: Event(InEvent)
 		{
 		}
 
@@ -65,13 +66,13 @@ namespace Parasite
 		{
 			if (Event.GetEventType() == T::GetStaticType())
 			{
-				Event.IsHandled = InFunc(*(T*)&InEvent);
+				Event.IsHandled = InFunc(*(T*)&Event);
 				return true;
 			}
 			return false;
 		}
 
 	private:
-		EEventType Event;
+		CEvent& Event;
 	};
 }
