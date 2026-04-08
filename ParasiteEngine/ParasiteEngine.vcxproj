@@ -23,19 +23,19 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
@@ -54,111 +54,102 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\bin\Debug-windows-x86_64\ParasiteEngine\</OutDir>
     <IntDir>$(ProjectDir)..\bin-int\Debug-windows-x86_64\ParasiteEngine\</IntDir>
     <TargetName>ParasiteEngine</TargetName>
-    <TargetExt>.dll</TargetExt>
+    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\bin\Release-windows-x86_64\ParasiteEngine\</OutDir>
     <IntDir>$(ProjectDir)..\bin-int\Release-windows-x86_64\ParasiteEngine\</IntDir>
     <TargetName>ParasiteEngine</TargetName>
-    <TargetExt>.dll</TargetExt>
+    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
-    <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\bin\Dist-windows-x86_64\ParasiteEngine\</OutDir>
     <IntDir>$(ProjectDir)..\bin-int\Dist-windows-x86_64\ParasiteEngine\</IntDir>
     <TargetName>ParasiteEngine</TargetName>
-    <TargetExt>.dll</TargetExt>
+    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pepch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>PE_PLATFORM_WINDOWS;PE_BUILD_DLL;GLFW_INCLUDE_NONE;PE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\GLFW\include;Vendor\Glad\include;Vendor\ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PE_PLATFORM_WINDOWS;PE_BUILD_DLL;GLFW_INCLUDE_NONE;PE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\GLFW\include;Vendor\Glad\include;Vendor\ImGui;Vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ImportLibrary>..\bin\Debug-windows-x86_64\ParasiteEngine\ParasiteEngine.lib</ImportLibrary>
     </Link>
+    <Lib>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
     <ProjectReference>
     </ProjectReference>
-    <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Debug-windows-x86_64\ParasiteEngine\ParasiteEngine.dll\ (xcopy /Q /E /Y /I ..\bin\Debug-windows-x86_64\ParasiteEngine\ParasiteEngine.dll "..\bin\Debug-windows-x86_64\Sandbox\" &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug-windows-x86_64\ParasiteEngine\ParasiteEngine.dll "..\bin\Debug-windows-x86_64\Sandbox\" &gt; nul)</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pepch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>PE_PLATFORM_WINDOWS;PE_BUILD_DLL;GLFW_INCLUDE_NONE;PE_Release;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\GLFW\include;Vendor\Glad\include;Vendor\ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PE_PLATFORM_WINDOWS;PE_BUILD_DLL;GLFW_INCLUDE_NONE;PE_Release;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\GLFW\include;Vendor\Glad\include;Vendor\ImGui;Vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ImportLibrary>..\bin\Release-windows-x86_64\ParasiteEngine\ParasiteEngine.lib</ImportLibrary>
     </Link>
+    <Lib>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
     <ProjectReference>
     </ProjectReference>
-    <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Release-windows-x86_64\ParasiteEngine\ParasiteEngine.dll\ (xcopy /Q /E /Y /I ..\bin\Release-windows-x86_64\ParasiteEngine\ParasiteEngine.dll "..\bin\Release-windows-x86_64\Sandbox\" &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release-windows-x86_64\ParasiteEngine\ParasiteEngine.dll "..\bin\Release-windows-x86_64\Sandbox\" &gt; nul)</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pepch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>PE_PLATFORM_WINDOWS;PE_BUILD_DLL;GLFW_INCLUDE_NONE;PE_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\GLFW\include;Vendor\Glad\include;Vendor\ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;PE_PLATFORM_WINDOWS;PE_BUILD_DLL;GLFW_INCLUDE_NONE;PE_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>Source;Vendor\spdlog\include;Vendor\GLFW\include;Vendor\Glad\include;Vendor\ImGui;Vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ImportLibrary>..\bin\Dist-windows-x86_64\ParasiteEngine\ParasiteEngine.lib</ImportLibrary>
     </Link>
+    <Lib>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
     <ProjectReference>
     </ProjectReference>
-    <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Dist-windows-x86_64\ParasiteEngine\ParasiteEngine.dll\ (xcopy /Q /E /Y /I ..\bin\Dist-windows-x86_64\ParasiteEngine\ParasiteEngine.dll "..\bin\Dist-windows-x86_64\Sandbox\" &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Dist-windows-x86_64\ParasiteEngine\ParasiteEngine.dll "..\bin\Dist-windows-x86_64\Sandbox\" &gt; nul)</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Source\ParasiteEngine.h" />
@@ -171,9 +162,11 @@
     <ClInclude Include="Source\ParasiteEngine\Events\MouseEvents.h" />
     <ClInclude Include="Source\ParasiteEngine\ImGui\ImGuiLayer.h" />
     <ClInclude Include="Source\ParasiteEngine\Input.h" />
+    <ClInclude Include="Source\ParasiteEngine\KeyCodes.h" />
     <ClInclude Include="Source\ParasiteEngine\Layer.h" />
     <ClInclude Include="Source\ParasiteEngine\LayerStack.h" />
     <ClInclude Include="Source\ParasiteEngine\Log.h" />
+    <ClInclude Include="Source\ParasiteEngine\MouseButtonCodes.h" />
     <ClInclude Include="Source\ParasiteEngine\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="Source\ParasiteEngine\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="Source\ParasiteEngine\Window.h" />
@@ -181,6 +174,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\ParasiteEngine\Application.cpp" />
+    <ClCompile Include="Source\ParasiteEngine\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="Source\ParasiteEngine\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="Source\ParasiteEngine\Layer.cpp" />
     <ClCompile Include="Source\ParasiteEngine\LayerStack.cpp" />

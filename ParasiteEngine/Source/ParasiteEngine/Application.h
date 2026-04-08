@@ -4,6 +4,7 @@
 #include "Window.h"
 #include "ParasiteEngine/Events/ApplicationEvent.h"
 #include "ParasiteEngine/LayerStack.h"
+#include "ParasiteEngine/ImGui/ImGuiLayer.h"
 
 
 namespace Parasite
@@ -30,6 +31,7 @@ namespace Parasite
 		CLayerStack LayerStack;
 
 		std::unique_ptr<CWindow> Window;
+		CImGuiLayer* ImGuiLayer;
 		bool bRunning = true;
 
 		static CApplication* Instance;

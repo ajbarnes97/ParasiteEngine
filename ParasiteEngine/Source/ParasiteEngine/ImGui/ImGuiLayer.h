@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ParasiteEngine/Layer.h"'
+#include "ParasiteEngine/Layer.h"
 
 #include "ParasiteEngine/Events/MouseEvents.h"
 #include "ParasiteEngine/Events/KeyEvent.h"
@@ -17,20 +17,10 @@ namespace Parasite
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
-		virtual void OnUpdate() override;
-		virtual void OnEvent(CEvent& InEvent) override;
+		virtual void OnImGuiRender() override;
 
-	private:
-		bool OnMouseButtonPressed(CMousePressedEvent& InEvent);
-		bool OnMouseButtonReleased(CMouseReleasedEvent& InEvent);
-		bool OnMouseScroll(CMouseScrollEvent& InEvent);
-		bool OnMouseMove(CMouseMoveEvent& InEvent);
-
-		bool OnKeyPressedEvent(CPressedKeyEvent& InEvent);
-		bool OnKeyReleasedEvent(CReleasedKeyEvent& InEvent);
-		bool OnKeyTypedEvent(CTypedKeyEvent& InEvent);
-		
-		bool OnWindowResize(CWindowResizeEvent& InEvent);
+		void Begin();
+		void End();
 
 	private:
 		float Time = 0.0f;

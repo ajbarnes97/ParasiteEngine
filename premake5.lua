@@ -16,6 +16,7 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "ParasiteEngine/Vendor/GLFW/include"
 IncludeDir["Glad"] = "ParasiteEngine/Vendor/Glad/include"
 IncludeDir["ImGui"] = "ParasiteEngine/Vendor/ImGui"
+IncludeDir["glm"] = "ParasiteEngine/Vendor/glm"
 
 -- Add premake files
 include "ParasiteEngine/Vendor/GLFW"
@@ -25,9 +26,10 @@ include "ParasiteEngine/Vendor/ImGui"
 
 project "ParasiteEngine"
 	location "ParasiteEngine"
-	kind "SharedLib"
+	kind "StaticLib"
 	language "C++"
-	staticruntime "off"
+	cppdialect "C++20"
+	staticruntime "on"
 
 	buildoptions 
 	{ 
@@ -46,6 +48,11 @@ project "ParasiteEngine"
 		"%{prj.name}/Source/**.cpp",
 	}
 
+	defines
+	{
+		"_CRT_SECURE_NO_WARNINGS",
+	}
+
 	includedirs
 	{
 		"%{prj.name}/Source",
@@ -53,6 +60,7 @@ project "ParasiteEngine"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.glm}",
 	}
 
 	links
@@ -64,7 +72,6 @@ project "ParasiteEngine"
 	}
 
 	filter "system:windows"
-		cppdialect "C++17"
 		systemversion "latest"
 
 		defines
@@ -74,32 +81,28 @@ project "ParasiteEngine"
 			"GLFW_INCLUDE_NONE",
 		}
 
-		postbuildcommands
-		{
-			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
-		}
-
 		filter "configurations:Debug"
 			defines "PE_DEBUG"
 			runtime "Debug"
-			symbols "On"
+			symbols "on"
 
 		filter "configurations:Release"
 			defines "PE_Release"
 			runtime "Release"
-			optimize "On"
+			optimize "on"
 
 		filter "configurations:Dist"
 			defines "PE_DIST"
 			runtime "Release"
-			optimize "On"
+			optimize "on"
 
 
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
-	staticruntime "off"
+	cppdialect "C++20"
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -119,6 +122,8 @@ project "Sandbox"
 	{
 		"ParasiteEngine/Vendor/spdlog/include",
 		"ParasiteEngine/Source",
+		"ParasiteEngine/Vendor",
+		"%{IncludeDir.glm}",
 	}
 
 	links
@@ -127,7 +132,6 @@ project "Sandbox"
 	}
 
 	filter "system:windows"
-		cppdialect "C++17"
 		systemversion "latest"
 
 		defines
@@ -138,14 +142,14 @@ project "Sandbox"
 		filter "configurations:Debug"
 			defines "PE_DEBUG"
 			runtime "Debug"
-			symbols "On"
+			symbols "on"
 
 		filter "configurations:Release"
 			defines "PE_Release"
 			runtime "Release"
-			optimize "On"
+			optimize "on"
 
 		filter "configurations:Dist"
 			defines "PE_DIST"
 			runtime "Release"
-			optimize "On"
+			optimize "on"

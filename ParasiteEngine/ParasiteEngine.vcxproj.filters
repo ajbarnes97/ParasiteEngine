@@ -46,6 +46,9 @@
     <ClInclude Include="Source\ParasiteEngine\Input.h">
       <Filter>ParasiteEngine</Filter>
     </ClInclude>
+    <ClInclude Include="Source\ParasiteEngine\KeyCodes.h">
+      <Filter>ParasiteEngine</Filter>
+    </ClInclude>
     <ClInclude Include="Source\ParasiteEngine\Layer.h">
       <Filter>ParasiteEngine</Filter>
     </ClInclude>
@@ -53,6 +56,9 @@
       <Filter>ParasiteEngine</Filter>
     </ClInclude>
     <ClInclude Include="Source\ParasiteEngine\Log.h">
+      <Filter>ParasiteEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ParasiteEngine\MouseButtonCodes.h">
       <Filter>ParasiteEngine</Filter>
     </ClInclude>
     <ClInclude Include="Source\ParasiteEngine\Platform\Windows\WindowsInput.h">
@@ -69,6 +75,9 @@
   <ItemGroup>
     <ClCompile Include="Source\ParasiteEngine\Application.cpp">
       <Filter>ParasiteEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ParasiteEngine\ImGui\ImGuiBuild.cpp">
+      <Filter>ParasiteEngine\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="Source\ParasiteEngine\ImGui\ImGuiLayer.cpp">
       <Filter>ParasiteEngine\ImGui</Filter>

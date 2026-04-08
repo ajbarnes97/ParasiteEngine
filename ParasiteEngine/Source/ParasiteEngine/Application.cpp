@@ -1,12 +1,14 @@
 #include "pepch.h"
 #include "Application.h"
 
+#include "ParasiteEngine/Events/Event.h"
 #include "ParasiteEngine/Log.h"
-#include "Events/Event.h"
+#include "ParasiteEngine/KeyCodes.h"
 
 #include "Glad/glad.h"
 
 #include "Input.h"
+
 
 namespace Parasite
 {
@@ -19,6 +21,9 @@ namespace Parasite
 
 		Window = std::unique_ptr<CWindow>(CWindow::Create());
 		Window->SetEventCallback(std::bind(&CApplication::OnEvent, this, std::placeholders::_1));
+	
+		ImGuiLayer = new CImGuiLayer();
+		PushOverlay(ImGuiLayer);
 	}
 
 	CApplication::~CApplication()
@@ -29,13 +34,25 @@ namespace Parasite
 	{
 		while (bRunning)
 		{
+			glClearColor(1, 0, 1, 1);
+			glClear(GL_COLOR_BUFFER_BIT);
+
 			for (CLayer* Layer : LayerStack)
 			{
 				Layer->OnUpdate();
 			}
 
-			auto [PosX, PosY] = CInput::GetMousePosition();
-			PE_CORE_LOG("{0}, {1}", PosX, PosY);
+			ImGuiLayer->Begin();
+			for (CLayer* Layer : LayerStack)
+			{
+				Layer->OnImGuiRender();
+			}
+			ImGuiLayer->End();
+
+			if (Parasite::CInput::IsKeyPressed(PE_KEY_A))
+			{
+				PE_CORE_LOG("Pressed A!");
+			}
 
 			Window->Update();
 		}

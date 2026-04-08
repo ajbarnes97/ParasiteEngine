@@ -23,6 +23,6 @@ namespace Parasite
 
 	private:
 		std::vector<CLayer*> Layers;
-		std::vector<CLayer*>::iterator LayerInsert;
+		unsigned int LayerInsertIndex = 0;
 	};
 }

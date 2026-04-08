@@ -7,7 +7,6 @@ namespace Parasite
 {
 	CLayerStack::CLayerStack()
 	{
-		LayerInsert = Layers.begin();
 	}
 
 	CLayerStack::~CLayerStack()
@@ -20,7 +19,8 @@ namespace Parasite
 
 	void CLayerStack::PushLayer(CLayer* InLayer)
 	{
-		LayerInsert = Layers.emplace(LayerInsert, InLayer);
+		Layers.emplace(Layers.begin() + LayerInsertIndex, InLayer);
+		LayerInsertIndex++;
 		InLayer->OnAttach();
 	}
 
@@ -30,7 +30,7 @@ namespace Parasite
 		if (It != Layers.end())
 		{
 			Layers.erase(It);
-			LayerInsert--;
+			LayerInsertIndex--;
 		}
 	}
 

@@ -1,11 +1,15 @@
 #pragma once
 
 #ifdef PE_PLATFORM_WINDOWS
+#if PE_DYNAMIC_LINK
 	#ifdef PE_BUILD_DLL
 		#define PARASITE_API __declspec(dllexport)
 	#else
 		#define PARASITE_API __declspec(dllimport)
 	#endif
+#else
+	#define PARASITE_API
+#endif
 #else
 	#error Parasite Engine only supports Windows
 #endif
