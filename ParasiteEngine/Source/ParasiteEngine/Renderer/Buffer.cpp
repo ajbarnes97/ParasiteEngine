@@ -24,8 +24,8 @@ namespace Parasite
 	{
 		switch (CRenderer::GetRendererAPI())
 		{
-			case ERendererAPI::None: return nullptr;
-			case ERendererAPI::OpenGL: return new COpenGLVertexBuffer(InVertices, InSize);
+			case CRendererAPI::EAPI::None: return nullptr;
+			case CRendererAPI::EAPI::OpenGL: return new COpenGLVertexBuffer(InVertices, InSize);
 		}
 		return nullptr;
 	}
@@ -35,8 +35,8 @@ namespace Parasite
 	{
 		switch (CRenderer::GetRendererAPI())
 		{
-		case ERendererAPI::None: return nullptr;
-		case ERendererAPI::OpenGL: return new COpenGLIndexBuffer(InIndices, InSize);
+			case CRendererAPI::EAPI::None: return nullptr;
+			case CRendererAPI::EAPI::OpenGL: return new COpenGLIndexBuffer(InIndices, InSize);
 		}
 		return nullptr;
 	}

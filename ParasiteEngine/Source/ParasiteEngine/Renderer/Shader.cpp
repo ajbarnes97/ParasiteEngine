@@ -2,6 +2,7 @@
 #include "Shader.h"
 
 #include "GLAD/glad.h"
+#include "glm/gtc/type_ptr.hpp"
 
 
 namespace Parasite
@@ -130,5 +131,12 @@ namespace Parasite
 	void CShader::Unbind() const
 	{
 		glUseProgram(0);
+	}
+
+	void CShader::UploadUniformMat4(const std::string& InName, const glm::mat4& InUniform)
+	{
+		GLint Location = glGetUniformLocation(RendererID, InName.c_str());
+
+		glUniformMatrix4fv(Location, 1, GL_FALSE, glm::value_ptr(InUniform));
 	}
 }

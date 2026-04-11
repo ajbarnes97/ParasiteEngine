@@ -11,8 +11,8 @@ namespace Parasite
 	{
 		switch (CRenderer::GetRendererAPI())
 		{
-			case ERendererAPI::None: return nullptr;
-			case ERendererAPI::OpenGL: return new COpenGLVertexArray();
+			case CRendererAPI::EAPI::None: return nullptr;
+			case CRendererAPI::EAPI::OpenGL: return new COpenGLVertexArray();
 		}
 		return nullptr;
 	}

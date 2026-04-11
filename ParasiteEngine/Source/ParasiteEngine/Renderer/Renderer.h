@@ -1,21 +1,28 @@
 #pragma once
+#include "RendererAPI.h"
+
+#include "Camera.h"
+#include "Shader.h"
 
 
 namespace Parasite
 {
-	enum class ERendererAPI
-	{
-		None = 0,
-		OpenGL,
-	};
-
-
 	class CRenderer
 	{
 	public:
-		inline static ERendererAPI GetRendererAPI() { return RendererAPI; }
+		static void BeginScene(COrthographicCamera& InCamera);
+		static void EndScene();
 
+		static void Submit(const std::shared_ptr<CShader> InShader, const std::shared_ptr<CVertexArray>& InVertexArray);
+
+		inline static CRendererAPI::EAPI GetRendererAPI() { return CRendererAPI::GetRendererAPI(); }
+	
 	private:
-		static ERendererAPI RendererAPI;
+		struct SSceneData
+		{
+			glm::mat4 ViewProjectionMatrix;
+		};
+
+		static SSceneData* SceneData;
 	};
 }

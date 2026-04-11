@@ -6,10 +6,6 @@
 #include "ParasiteEngine/LayerStack.h"
 #include "ParasiteEngine/ImGui/ImGuiLayer.h"
 
-#include "Renderer/Shader.h" // todo: remove
-#include "Renderer/Buffer.h"
-#include "Renderer/VertexArray.h"
-
 
 namespace Parasite
 {
@@ -37,12 +33,6 @@ namespace Parasite
 		std::unique_ptr<CWindow> Window;
 		CImGuiLayer* ImGuiLayer;
 		bool bRunning = true;
-
-		std::shared_ptr<CShader> Shader;
-		std::shared_ptr<CVertexArray> VertexArray;
-
-		std::shared_ptr<CShader> BlueShader;
-		std::shared_ptr<CVertexArray> SquareVertexArray;
 		
 		static CApplication* Instance;
 	};

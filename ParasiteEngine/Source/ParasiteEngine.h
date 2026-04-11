@@ -12,4 +12,17 @@
 #include "ParasiteEngine/MouseButtonCodes.h"
 #include "ParasiteEngine/KeyCodes.h"
 
+// --- Renderer
+#include "ParasiteEngine/Renderer/Renderer.h"
+#include "ParasiteEngine/Renderer/RenderCommand.h"
+
+#include "ParasiteEngine/Renderer/Buffer.h"
+#include "ParasiteEngine/Renderer/Shader.h"
+#include "ParasiteEngine/Renderer/VertexArray.h"
+// ---
+
+#include "ParasiteEngine/Renderer/Camera.h"
+
+// --- Entry Point
 #include "ParasiteEngine/EntryPoint.h"
+// --- 

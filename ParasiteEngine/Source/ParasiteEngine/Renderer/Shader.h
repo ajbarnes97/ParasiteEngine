@@ -1,6 +1,8 @@
 #pragma once
 
 #include "string"
+#include "glm/glm.hpp"
+
 
 namespace Parasite
 {
@@ -12,6 +14,8 @@ namespace Parasite
 
 		void Bind() const;
 		void Unbind() const;
+
+		void UploadUniformMat4(const std::string& InName, const glm::mat4& InUniform);
 
 	private:
 		uint32_t RendererID;
