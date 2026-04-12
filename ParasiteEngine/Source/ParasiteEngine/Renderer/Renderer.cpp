@@ -19,7 +19,7 @@ namespace Parasite
 
 	}
 
-	void CRenderer::Submit(const std::shared_ptr<CShader> InShader, const std::shared_ptr<CVertexArray>& InVertexArray, const glm::mat4& InTransform)
+	void CRenderer::Submit(const TSharedPtr<CShader> InShader, const TSharedPtr<CVertexArray>& InVertexArray, const glm::mat4& InTransform)
 	{
 		InShader->Bind();
 		std::dynamic_pointer_cast<COpenGLShader>(InShader)->UploadUniformMat4("u_ViewProjection", SceneData->ViewProjectionMatrix);

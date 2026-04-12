@@ -47,7 +47,7 @@ namespace Parasite
 		glBindVertexArray(0);
 	}
 
-	void COpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<CVertexBuffer>& InVertexBuffer)
+	void COpenGLVertexArray::AddVertexBuffer(const TSharedPtr<CVertexBuffer>& InVertexBuffer)
 	{
 		glBindVertexArray(RendererID);
 		InVertexBuffer->Bind();
@@ -71,7 +71,7 @@ namespace Parasite
 		VertexBuffers.push_back(InVertexBuffer);
 	}
 
-	void COpenGLVertexArray::SetIndexBuffer(const std::shared_ptr<CIndexBuffer>& InIndexBuffer)
+	void COpenGLVertexArray::SetIndexBuffer(const TSharedPtr<CIndexBuffer>& InIndexBuffer)
 	{
 		glBindVertexArray(RendererID);
 		InIndexBuffer->Bind();

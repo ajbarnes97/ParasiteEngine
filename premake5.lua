@@ -17,6 +17,7 @@ IncludeDir["GLFW"] = "ParasiteEngine/Vendor/GLFW/include"
 IncludeDir["Glad"] = "ParasiteEngine/Vendor/Glad/include"
 IncludeDir["ImGui"] = "ParasiteEngine/Vendor/ImGui"
 IncludeDir["glm"] = "ParasiteEngine/Vendor/glm"
+IncludeDir["stb_image"] = "ParasiteEngine/Vendor/stb_image"
 
 -- Add premake files
 include "ParasiteEngine/Vendor/GLFW"
@@ -45,6 +46,8 @@ project "ParasiteEngine"
 	files
 	{
 		"%{prj.name}/Source/**.h",
+		"%{prj.name}/Vendor/stb_image/**.h",
+		"%{prj.name}/Vendor/stb_image/**.cpp",
 		"%{prj.name}/Source/**.cpp",
 	}
 
@@ -61,6 +64,7 @@ project "ParasiteEngine"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}",
 	}
 
 	links

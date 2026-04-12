@@ -18,6 +18,7 @@
 
 #include "ParasiteEngine/Renderer/Buffer.h"
 #include "ParasiteEngine/Renderer/Shader.h"
+#include "ParasiteEngine/Renderer/Texture.h"
 #include "ParasiteEngine/Renderer/VertexArray.h"
 // ---
 

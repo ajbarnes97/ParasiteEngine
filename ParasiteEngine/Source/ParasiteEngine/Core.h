@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 
 #ifdef PE_PLATFORM_WINDOWS
 #if PE_DYNAMIC_LINK
@@ -29,3 +30,12 @@
 #define BIT(x) (1 << x)
 
 #define PE_BIND_EVENT_FUNC(InFunc) std::bind(&InFunc, this, std::placeholders::_1)
+
+namespace Parasite
+{
+	template<typename T>
+	using TWeakPtr = std::unique_ptr<T>;
+
+	template<typename T>
+	using TSharedPtr = std::shared_ptr<T>;
+}

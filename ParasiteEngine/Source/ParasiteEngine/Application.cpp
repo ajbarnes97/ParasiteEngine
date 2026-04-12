@@ -18,7 +18,7 @@ namespace Parasite
 		PE_CORE_ASSERT(!Instance, "An Application already exists.");
 		Instance = this;
 
-		Window = std::unique_ptr<CWindow>(CWindow::Create());
+		Window = TWeakPtr<CWindow>(CWindow::Create());
 		Window->SetEventCallback(std::bind(&CApplication::OnEvent, this, std::placeholders::_1));
 
 		ImGuiLayer = new CImGuiLayer();

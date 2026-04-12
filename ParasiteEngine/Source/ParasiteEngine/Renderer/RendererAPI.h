@@ -19,7 +19,7 @@ namespace Parasite
 		virtual void SetClearColour(const glm::vec4& InColour) = 0;
 		virtual void Clear() = 0;
 
-		virtual void DrawIndexed(const std::shared_ptr<CVertexArray>& InVertexArray) = 0;
+		virtual void DrawIndexed(const TSharedPtr<CVertexArray>& InVertexArray) = 0;
 
 		inline static EAPI GetRendererAPI() { return RendererAPI; }
 

@@ -26,7 +26,7 @@ public:
 			 0.0f, 0.5f, 0.0f,			0.8f, 0.8f, 0.2f, 1.f,
 		};
 
-		std::shared_ptr<CVertexBuffer> VertexBuffer;
+		TSharedPtr<CVertexBuffer> VertexBuffer;
 		VertexBuffer.reset(CVertexBuffer::Create(Vertices, sizeof(Vertices)));
 		CBufferLayout BufferLayout =
 		{
@@ -37,29 +37,30 @@ public:
 		VertexArray->AddVertexBuffer(VertexBuffer);
 
 		uint32_t Indices[3] = { 0, 1, 2 };
-		std::shared_ptr<CIndexBuffer> IndexBuffer;
+		TSharedPtr<CIndexBuffer> IndexBuffer;
 		IndexBuffer.reset(CIndexBuffer::Create(Indices, 3));
 		VertexArray->SetIndexBuffer(IndexBuffer);
 
 		SquareVertexArray.reset(CVertexArray::Create());
 
-		float SquareVertices[3 * 4] =
+		float SquareVertices[5 * 4] =
 		{
-			-0.5f,		-0.5f, 0.0f,
-			 0.5f,		-0.5f, 0.0f,
-			 0.5f,		 0.5f, 0.0f,
-			-0.5f,		 0.5f, 0.0f,
+			-0.5f,-0.5f, 0.0f,		0.0f, 0.0f,
+			 0.5f,-0.5f, 0.0f,		1.0f, 0.0f,
+			 0.5f, 0.5f, 0.0f,		1.0f, 1.0f,
+			-0.5f, 0.5f, 0.0f,		0.0f, 1.0f,
 		};
 
-		std::shared_ptr<CVertexBuffer> SquareVertexBuffer;
+		TSharedPtr<CVertexBuffer> SquareVertexBuffer;
 		SquareVertexBuffer.reset(CVertexBuffer::Create(SquareVertices, sizeof(SquareVertices)));
 		SquareVertexBuffer->SetLayout({
 				{ EShaderDataType::Float3, "a_Position" },
+				{ EShaderDataType::Float2, "a_TexCoord" },
 			});
 		SquareVertexArray->AddVertexBuffer(SquareVertexBuffer);
 
 		uint32_t SqaureIndices[6] = { 0, 1, 2, 2, 3, 0 };
-		std::shared_ptr<CIndexBuffer> SqaureIndexBuffer;
+		TSharedPtr<CIndexBuffer> SqaureIndexBuffer;
 		SqaureIndexBuffer.reset(CIndexBuffer::Create(SqaureIndices, sizeof(SqaureIndices) / sizeof(uint32_t)));
 		SquareVertexArray->SetIndexBuffer(SqaureIndexBuffer);
 
@@ -128,8 +129,49 @@ public:
 			}
 		)";
 
+		std::string TextureVertexSource = R"(
+			#version 330 core
+
+			layout(location = 0) in vec3 a_Position;
+			layout(location = 1) in vec2 a_TexCoord;
+
+			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Transform;
+
+			out vec2 v_TexCoord;
+
+			void main()
+			{
+				v_TexCoord = a_TexCoord;
+				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
+			}
+		)";
+
+		std::string TextureFragmentSource = R"(
+			#version 330 core
+
+			layout(location = 0) out vec4 color;
+
+			in vec3 v_Position;
+			in vec2 v_TexCoord;
+
+			uniform sampler2D u_Texture;
+
+			void main()
+			{
+				color = texture(u_Texture, v_TexCoord);
+			}
+		)";
+
 		Shader.reset(CShader::Create(VertexSource, FragmentSource));
+		TextureShader.reset(CShader::Create(TextureVertexSource, TextureFragmentSource));
 		FlatColourShader.reset(CShader::Create(FlatColourVertexSource, FlatColourFragmentSource));
+
+		//Texture = CTexture2D::Create("E:/Projects/ParasiteEngine/Assets/Textures/Screenshot.png");
+
+		std::dynamic_pointer_cast<COpenGLShader>(TextureShader)->Bind();
+		std::dynamic_pointer_cast<COpenGLShader>(TextureShader)->UploadUniformInt("u_Texture", 0);
+
 	}
 
 	virtual void OnUpdate(CTimestep InTimestep) override
@@ -175,8 +217,11 @@ public:
 				CRenderer::Submit(FlatColourShader, SquareVertexArray, Transform);
 			}
 		}
+		
+		Texture->Bind();
+		CRenderer::Submit(TextureShader, SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
-		CRenderer::Submit(Shader, VertexArray);
+		//CRenderer::Submit(Shader, VertexArray);
 
 		CRenderer::EndScene();
 	}
@@ -195,11 +240,12 @@ public:
 	}
 
 private:
-	std::shared_ptr<CShader> Shader;
-	std::shared_ptr<CVertexArray> VertexArray;
+	TSharedPtr<CShader> Shader;
+	TSharedPtr<CVertexArray> VertexArray;
 
-	std::shared_ptr<CShader> FlatColourShader;
-	std::shared_ptr<CVertexArray> SquareVertexArray;
+	TSharedPtr<CShader> FlatColourShader, TextureShader;
+	TSharedPtr<CVertexArray> SquareVertexArray;
+	TSharedPtr<CTexture2D> Texture;
 
 	COrthographicCamera OrthoCamera;
 	glm::vec3 CameraPosition = {0.0f, 0.0f, 0.0f};

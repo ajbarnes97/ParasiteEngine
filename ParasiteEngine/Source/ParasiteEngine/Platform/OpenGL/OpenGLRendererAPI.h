@@ -10,6 +10,6 @@ namespace Parasite
 		virtual void SetClearColour(const glm::vec4& InColour) override;
 		virtual void Clear() override;
 
-		virtual void DrawIndexed(const std::shared_ptr<CVertexArray>& InVertexArray) override;
+		virtual void DrawIndexed(const TSharedPtr<CVertexArray>& InVertexArray) override;
 	};
 }

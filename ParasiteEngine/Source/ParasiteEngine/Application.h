@@ -30,7 +30,7 @@ namespace Parasite
 	private:
 		CLayerStack LayerStack;
 
-		std::unique_ptr<CWindow> Window;
+		TWeakPtr<CWindow> Window;
 		CImGuiLayer* ImGuiLayer;
 		bool bRunning = true;
 		
