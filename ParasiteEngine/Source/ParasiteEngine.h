@@ -21,6 +21,8 @@
 #include "ParasiteEngine/Renderer/VertexArray.h"
 // ---
 
+#include "ParasiteEngine/Core/Timestep.h"
+
 #include "ParasiteEngine/Renderer/Camera.h"
 
 // --- Entry Point

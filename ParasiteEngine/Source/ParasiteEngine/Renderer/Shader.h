@@ -9,15 +9,11 @@ namespace Parasite
 	class CShader
 	{
 	public:
-		CShader(const std::string& InVertexSource, const std::string& InFragmentSource);
-		~CShader();
+		virtual ~CShader() = default;
 
-		void Bind() const;
-		void Unbind() const;
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
 
-		void UploadUniformMat4(const std::string& InName, const glm::mat4& InUniform);
-
-	private:
-		uint32_t RendererID;
+		static CShader* Create(const std::string& InVertexSource, const std::string& InFragmentSource);
 	};
 }

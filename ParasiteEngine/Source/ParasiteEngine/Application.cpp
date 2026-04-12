@@ -4,10 +4,9 @@
 #include "ParasiteEngine/Events/Event.h"
 #include "ParasiteEngine/Log.h"
 #include "ParasiteEngine/KeyCodes.h"
+#include "ParasiteEngine/Core/Timestep.h"
 
-#include "glm/ext/vector_float4.hpp"
-
-#include "Input.h"
+#include "GLFW/glfw3.h"
 
 
 namespace Parasite
@@ -34,9 +33,13 @@ namespace Parasite
 	{
 		while (bRunning)
 		{
+			const float Time = static_cast<float>(glfwGetTime()); // todo: platfrom::GetTime
+			CTimestep Timestep = Time - LastFrameTime;
+			LastFrameTime = Time;
+
 			for (CLayer* Layer : LayerStack)
 			{
-				Layer->OnUpdate();
+				Layer->OnUpdate(Timestep);
 			}
 
 			ImGuiLayer->Begin();

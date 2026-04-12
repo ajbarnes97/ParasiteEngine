@@ -2,6 +2,7 @@
 
 #include "ParasiteEngine/Core.h"
 #include "ParasiteEngine/Events/Event.h"
+#include "Core/Timestep.h"
 
 
 namespace Parasite
@@ -14,7 +15,7 @@ namespace Parasite
 
 		virtual void OnAttach() {};
 		virtual void OnDetach() {};
-		virtual void OnUpdate() {};
+		virtual void OnUpdate(CTimestep InTimeStep) {};
 		virtual void OnImGuiRender() {};
 		virtual void OnEvent(CEvent& InEvent) {};
 

@@ -34,6 +34,8 @@ namespace Parasite
 		CImGuiLayer* ImGuiLayer;
 		bool bRunning = true;
 		
+		float LastFrameTime = 0.0f;
+
 		static CApplication* Instance;
 	};
 

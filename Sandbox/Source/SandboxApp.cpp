@@ -4,6 +4,8 @@
 #include "ParasiteEngine/Events/Event.h"
 
 #include "ImGui/imgui.h"
+#include "ParasiteEngine/Platform/OpenGL/OpenGLShader.h"
+#include "glm/gtc/type_ptr.hpp"
 
 using namespace Parasite;
 
@@ -43,10 +45,10 @@ public:
 
 		float SquareVertices[3 * 4] =
 		{
-			-0.75f,		-0.75f, 0.0f,
-			 0.75f,		-0.75f, 0.0f,
-			 0.75f,		 0.75f, 0.0f,
-			-0.75f,		 0.75f, 0.0f,
+			-0.5f,		-0.5f, 0.0f,
+			 0.5f,		-0.5f, 0.0f,
+			 0.5f,		 0.5f, 0.0f,
+			-0.5f,		 0.5f, 0.0f,
 		};
 
 		std::shared_ptr<CVertexBuffer> SquareVertexBuffer;
@@ -68,6 +70,7 @@ public:
 			layout(location = 1) in vec4 a_Color;
 
 			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Transform;
 
 			out vec3 v_Position;
 			out vec4 v_Color;
@@ -76,7 +79,7 @@ public:
 			{
 				v_Position = a_Position;
 				v_Color = a_Color;
-				gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
 			}
 		)";
 
@@ -94,55 +97,60 @@ public:
 			}
 		)";
 
-		std::string VertexSource2 = R"(
+		std::string FlatColourVertexSource = R"(
 			#version 330 core
 
 			layout(location = 0) in vec3 a_Position;
 
 			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Transform;
 
 			out vec3 v_Position;
 
 			void main()
 			{
 				v_Position = a_Position;
-				gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
 			}
 		)";
 
-		std::string FragmentSource2 = R"(
+		std::string FlatColourFragmentSource = R"(
 			#version 330 core
 
 			layout(location = 0) out vec4 color;
+
 			in vec3 v_Position;
+			uniform vec3 u_Colour;
 
 			void main()
 			{
-				color = vec4(0.2, 0.3, 0.8, 1.0);	
+				color = vec4(u_Colour, 1.0f);	
 			}
 		)";
 
-		Shader.reset(new CShader(VertexSource, FragmentSource));
-		BlueShader.reset(new CShader(VertexSource2, FragmentSource2));
+		Shader.reset(CShader::Create(VertexSource, FragmentSource));
+		FlatColourShader.reset(CShader::Create(FlatColourVertexSource, FlatColourFragmentSource));
 	}
 
-	virtual void OnUpdate() override
+	virtual void OnUpdate(CTimestep InTimestep) override
 	{
+		const float Speed = CameraSpeed *InTimestep;
+		const float RotSpeed = RotationSpeed *InTimestep;
 		if (CInput::IsKeyPressed(PE_KEY_D))
 		{
-			CameraPosition.x += CameraSpeed;
+			CameraPosition.x += Speed;
 		}
 		if (CInput::IsKeyPressed(PE_KEY_A))
 		{
-			CameraPosition.x -= CameraSpeed;
+			CameraPosition.x -= Speed;
 		}
 		if (CInput::IsKeyPressed(PE_KEY_UP))
 		{
-			CameraRotation += RotationSpeed;
+			CameraRotation += RotSpeed;
 		}
 		if (CInput::IsKeyPressed(PE_KEY_DOWN))
 		{
-			CameraRotation -= RotationSpeed;
+			CameraRotation -= RotSpeed;
 		}
 
 		CRenderCommand::SetClearColour(glm::vec4(0.1f, 0.1f, 0.1f, 1));
@@ -153,7 +161,21 @@ public:
 
 		CRenderer::BeginScene(OrthoCamera);
 
-		CRenderer::Submit(BlueShader, SquareVertexArray);
+		glm::mat4 Scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+
+		std::dynamic_pointer_cast<COpenGLShader>(FlatColourShader)->Bind();
+		std::dynamic_pointer_cast<COpenGLShader>(FlatColourShader)->UploadUniformFloat3("u_Colour", SqaureColour);
+
+		for (int Y = 0; Y < 20; Y++)
+		{
+			for (int X = 0; X < 20; X++)
+			{
+				glm::vec3 Position = glm::vec3(X * 0.11f, Y * 0.11f, 0.0f);
+				glm::mat4 Transform = glm::translate(glm::mat4(1.0f), Position) * Scale;
+				CRenderer::Submit(FlatColourShader, SquareVertexArray, Transform);
+			}
+		}
+
 		CRenderer::Submit(Shader, VertexArray);
 
 		CRenderer::EndScene();
@@ -163,18 +185,29 @@ public:
 	{
 	}
 
+	virtual void  OnImGuiRender() override
+	{
+		ImGui::Begin("Settings");
+
+		ImGui::ColorEdit3("Square Colour:", glm::value_ptr(SqaureColour));
+
+		ImGui::End();
+	}
+
 private:
 	std::shared_ptr<CShader> Shader;
 	std::shared_ptr<CVertexArray> VertexArray;
 
-	std::shared_ptr<CShader> BlueShader;
+	std::shared_ptr<CShader> FlatColourShader;
 	std::shared_ptr<CVertexArray> SquareVertexArray;
 
 	COrthographicCamera OrthoCamera;
 	glm::vec3 CameraPosition = {0.0f, 0.0f, 0.0f};
-	float CameraSpeed = 0.1f;
+	float CameraSpeed = 1.5f;
 	float CameraRotation = 0.0f;
-	float RotationSpeed = 1.0f;
+	float RotationSpeed = 180.0f;
+
+	glm::vec3 SqaureColour = { 0.2f, 0.3f, 0.8f };
 };
 
 
