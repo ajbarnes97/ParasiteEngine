@@ -56,12 +56,6 @@ namespace Parasite
 		ImGui::DestroyContext();
 	}
 
-	void CImGuiLayer::OnImGuiRender()
-	{
-		static bool bShow = true;
-		ImGui::ShowDemoWindow(&bShow);
-	}
-
 	void CImGuiLayer::Begin()
 	{
 		ImGui_ImplOpenGL3_NewFrame();

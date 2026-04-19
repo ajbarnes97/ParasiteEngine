@@ -36,6 +36,19 @@ namespace Parasite
 	template<typename T>
 	using TWeakPtr = std::unique_ptr<T>;
 
+	template<typename T, typename ... Args>
+	constexpr TWeakPtr<T> MakeWeak(Args&& ... InArgs)
+	{
+		return std::make_unique<T>(std::forward<Args>(InArgs)...);
+	}
+
+
 	template<typename T>
 	using TSharedPtr = std::shared_ptr<T>;
+
+	template<typename T, typename ... Args>
+	constexpr TSharedPtr<T> MakeShared(Args&& ... InArgs)
+	{
+		return std::make_shared<T>(std::forward<Args>(InArgs)...);
+	}
 }

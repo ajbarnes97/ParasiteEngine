@@ -13,8 +13,8 @@ namespace Parasite
 	struct SRenderer2DData
 	{
 		TSharedPtr<CVertexArray> QuadVertexArray;
-		TSharedPtr<CShader> FlatColourShader;
 		TSharedPtr<CShader> TextureShader;
+		TSharedPtr<CTexture2D> WhiteTexture;
 	};
 	static SRenderer2DData* Data;
 
@@ -48,7 +48,10 @@ namespace Parasite
 		SqaureIndexBuffer.reset(CIndexBuffer::Create(SqaureIndices, sizeof(SqaureIndices) / sizeof(uint32_t)));
 		Data->QuadVertexArray->SetIndexBuffer(SqaureIndexBuffer);
 
-		Data->FlatColourShader = CShader::Create("Assets/Shaders/FlatColour.glsl");
+		Data->WhiteTexture = CTexture2D::Create(1, 1);
+		uint32_t TextureData = 0xffffffff;
+		Data->WhiteTexture->SetData(&TextureData, sizeof(TextureData));
+
 		Data->TextureShader = CShader::Create("Assets/Shaders/Texture.glsl");
 		Data->TextureShader->Bind();
 		Data->TextureShader->SetInt("u_Texture", 0);
@@ -61,9 +64,6 @@ namespace Parasite
 
 	void CRenderer2D::BeginScene(const CCamera& InCamera)
 	{
-		Data->FlatColourShader->Bind();
-		Data->FlatColourShader->SetMat4("u_ViewProjection", InCamera.GetViewProjectionMatrix());
-
 		Data->TextureShader->Bind();
 		Data->TextureShader->SetMat4("u_ViewProjection", InCamera.GetViewProjectionMatrix());
 	}
@@ -80,26 +80,63 @@ namespace Parasite
 
 	void CRenderer2D::DrawQuad(const glm::vec3& InPosition, const glm::vec2& InSize, const glm::vec4 InColour)
 	{
-		Data->FlatColourShader->Bind();
-		Data->FlatColourShader->SetFloat4("u_Colour", InColour);
+		Data->TextureShader->SetFloat4("u_Colour", InColour);
+		Data->TextureShader->SetFloat("u_TilingFactor", 1.0f);
+		Data->WhiteTexture->Bind();
 
-		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), InPosition) * glm::scale(glm::mat4(1.0f), {InSize.x, InSize.y, 1.0f});
-		Data->FlatColourShader->SetMat4("u_Transform", Transform);
+		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), InPosition) 
+			* glm::scale(glm::mat4(1.0f), {InSize.x, InSize.y, 1.0f});
+		Data->TextureShader->SetMat4("u_Transform", Transform);
 
 		Data->QuadVertexArray->Bind();
 		CRenderCommand::DrawIndexed(Data->QuadVertexArray);
 	}
 
-	void CRenderer2D::DrawQuad(const glm::vec2& InPosition, const glm::vec2& InSize, const TSharedPtr<CTexture>& InTexture)
+	void CRenderer2D::DrawQuad(const glm::vec2& InPosition, const glm::vec2& InSize, const TSharedPtr<CTexture>& InTexture, const float InTilingFactor, const glm::vec4& InTintColour)
 	{
-		DrawQuad({ InPosition.x, InPosition.y, 0.0f }, InSize, InTexture);
+		DrawQuad({ InPosition.x, InPosition.y, 0.0f }, InSize, InTexture, InTilingFactor, InTintColour);
 	}
 
-	void CRenderer2D::DrawQuad(const glm::vec3& InPosition, const glm::vec2& InSize, const TSharedPtr<CTexture>& InTexture)
+	void CRenderer2D::DrawQuad(const glm::vec3& InPosition, const glm::vec2& InSize, const TSharedPtr<CTexture>& InTexture, const float InTilingFactor, const glm::vec4& InTintColour)
 	{
+		Data->TextureShader->SetFloat4("u_Colour", InTintColour);
+		Data->TextureShader->SetFloat("u_TilingFactor", InTilingFactor);
 		Data->TextureShader->Bind();
 
-		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), InPosition) * glm::scale(glm::mat4(1.0f), { InSize.x, InSize.y, 1.0f });
+		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), InPosition) 
+			* glm::scale(glm::mat4(1.0f), { InSize.x, InSize.y, 1.0f });
+		Data->TextureShader->SetMat4("u_Transform", Transform);
+
+		InTexture->Bind();
+
+		Data->QuadVertexArray->Bind();
+		CRenderCommand::DrawIndexed(Data->QuadVertexArray);
+	}
+
+	void CRenderer2D::DrawRotatedQuad(const glm::vec3& InPosition, const glm::vec2& InSize, const float InRotation, const glm::vec4 InColour)
+	{
+		Data->TextureShader->SetFloat4("u_Colour", InColour);
+		Data->TextureShader->SetFloat("u_TilingFactor", 1.0f);
+		Data->WhiteTexture->Bind();
+
+		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), InPosition) 
+			* glm::rotate(glm::mat4(1.0f), InRotation, { 0.0f, 0.0f, 1.0f })
+			* glm::scale(glm::mat4(1.0f), { InSize.x, InSize.y, 1.0f });
+		Data->TextureShader->SetMat4("u_Transform", Transform);
+
+		Data->QuadVertexArray->Bind();
+		CRenderCommand::DrawIndexed(Data->QuadVertexArray);
+	}
+
+	void CRenderer2D::DrawRotatedQuad(const glm::vec3& InPosition, const glm::vec2& InSize, const float InRotation, const TSharedPtr<CTexture>& InTexture, const float InTilingFactor, const glm::vec4& InTintColour)
+	{
+		Data->TextureShader->SetFloat4("u_Colour", InTintColour);
+		Data->TextureShader->SetFloat("u_TilingFactor", InTilingFactor);
+		Data->TextureShader->Bind();
+
+		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), InPosition)
+			* glm::rotate(glm::mat4(1.0f), InRotation, { 0.0f, 0.0f, 1.0f })
+			* glm::scale(glm::mat4(1.0f), { InSize.x, InSize.y, 1.0f });
 		Data->TextureShader->SetMat4("u_Transform", Transform);
 
 		InTexture->Bind();

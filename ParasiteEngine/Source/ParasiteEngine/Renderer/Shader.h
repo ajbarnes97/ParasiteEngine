@@ -18,6 +18,8 @@ namespace Parasite
 
 		virtual void SetFloat4(const std::string& InName, const glm::vec4& InValue) = 0;
 		virtual void SetFloat3(const std::string& InName, const glm::vec3& InValue) = 0;
+		virtual void SetFloat2(const std::string& InName, const glm::vec2& InValue) = 0;
+		virtual void SetFloat(const std::string& InName, const float InValue) = 0;
 		virtual void SetMat4(const std::string& InName, const glm::mat4& InValue) = 0;
 		virtual void SetInt(const std::string& InName, int InValue) = 0;
 

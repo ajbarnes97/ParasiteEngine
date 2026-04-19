@@ -1,7 +1,6 @@
 #include "pepch.h"
 #include "OpenGLTexture.h"
 
-#include "GLAD/glad.h"
 #include "stb_image.h"
 
 
@@ -34,6 +33,9 @@ namespace Parasite
 			PE_CORE_ASSERT(false, "Format not supported.");
 		}
 
+		InternalFormat = OpenGLFormat;
+		Format = DataFormat;
+
 		glCreateTextures(GL_TEXTURE_2D, 1, &RendererID);
 		glTextureStorage2D(RendererID, 1, OpenGLFormat, Width, Height);
 
@@ -48,9 +50,32 @@ namespace Parasite
 		stbi_image_free(Data);
 	}
 
+	COpenGLTexture2D::COpenGLTexture2D(uint32_t InWidth, uint32_t InHeight)
+		:Width(InWidth), Height(InHeight)
+	{
+		InternalFormat = GL_RGBA8;
+		Format = GL_RGBA;
+
+		glCreateTextures(GL_TEXTURE_2D, 1, &RendererID);
+		glTextureStorage2D(RendererID, 1, InternalFormat, Width, Height);
+
+		glTextureParameteri(RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(RendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		glTextureParameteri(RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTextureParameteri(RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	}
+
 	COpenGLTexture2D::~COpenGLTexture2D()
 	{
 		glDeleteTextures(1, &RendererID);
+	}
+
+	void COpenGLTexture2D::SetData(void* InData, uint32_t InSize)
+	{
+		uint32_t BitsPerPixel = Format == GL_RGBA ? 4 : 3;
+		PE_CORE_ASSERT(InSize == Width * Height * BitsPerPixel, "Data must be entire texture.");
+		glTextureSubImage2D(RendererID, 0, 0, 0, Width, Height, Format, GL_UNSIGNED_BYTE, InData);
 	}
 
 	void COpenGLTexture2D::Bind(uint32_t InSlot) const

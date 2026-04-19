@@ -68,6 +68,16 @@ namespace Parasite
 		UploadUniformFloat3(InName, InValue);
 	}
 
+	void COpenGLShader::SetFloat2(const std::string& InName, const glm::vec2& InValue)
+	{
+		UploadUniformFloat2(InName, InValue);
+	}
+
+	void COpenGLShader::SetFloat(const std::string& InName, const float InValue)
+	{
+		UploadUniformFloat(InName, InValue);
+	}
+
 	void COpenGLShader::SetMat4(const std::string& InName, const glm::mat4& InValue)
 	{
 		UploadUniformMat4(InName, InValue);

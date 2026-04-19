@@ -11,7 +11,17 @@ namespace Parasite
 		switch (CRenderer::GetRendererAPI())
 		{
 		case CRendererAPI::EAPI::None: return nullptr;
-		case CRendererAPI::EAPI::OpenGL: return std::make_shared<COpenGLTexture2D>(InFilePath);
+		case CRendererAPI::EAPI::OpenGL: return MakeShared<COpenGLTexture2D>(InFilePath);
+		}
+		return nullptr;
+	}
+
+	TSharedPtr<CTexture2D> CTexture2D::Create(uint32_t InWidth, uint32_t InHeight)
+	{
+		switch (CRenderer::GetRendererAPI())
+		{
+		case CRendererAPI::EAPI::None: return nullptr;
+		case CRendererAPI::EAPI::OpenGL: return MakeShared<COpenGLTexture2D>(InWidth, InHeight);
 		}
 		return nullptr;
 	}
