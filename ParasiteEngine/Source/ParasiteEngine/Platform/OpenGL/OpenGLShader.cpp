@@ -88,10 +88,21 @@ namespace Parasite
 		UploadUniformInt(InName, InValue);
 	}
 
+	void COpenGLShader::SetIntArray(const std::string& InName, int* InValues, uint32_t InCount)
+	{
+		UploadUniformIntArray(InName, InValues, InCount);
+	}
+
 	void COpenGLShader::UploadUniformInt(const std::string& InName, const int InValue)
 	{
 		GLint Location = glGetUniformLocation(RendererID, InName.c_str());
 		glUniform1i(Location, InValue);
+	}
+
+	void COpenGLShader::UploadUniformIntArray(const std::string& InName, const int* InValues, uint32_t InCount)
+	{
+		GLint Location = glGetUniformLocation(RendererID, InName.c_str());
+		glUniform1iv(Location, InCount, InValues);
 	}
 
 	void COpenGLShader::UploadUniformFloat(const std::string& InName, const float InValue)

@@ -22,11 +22,14 @@ namespace Parasite
 		virtual void SetFloat(const std::string& InName, const float InValue) override;
 
 		virtual void SetMat4(const std::string& InName, const glm::mat4& InValue) override;
+
 		virtual void SetInt(const std::string& InName, int InValue) override;
+		virtual void SetIntArray(const std::string& InName, int* InValues,  uint32_t InCount) override;
 
 		virtual const std::string& GetName() const override { return Name; };
 
 		void UploadUniformInt(const std::string& InName, const int InValue);
+		void UploadUniformIntArray(const std::string& InName, const int* InValues, uint32_t InCount);
 		
 		void UploadUniformFloat(const std::string& InName, const float InValue);
 		void UploadUniformFloat2(const std::string& InName, const glm::vec2 InValues);

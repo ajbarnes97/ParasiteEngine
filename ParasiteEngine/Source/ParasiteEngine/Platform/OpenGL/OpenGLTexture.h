@@ -20,6 +20,8 @@ namespace Parasite
 
 		virtual void Bind(uint32_t InSlot) const override;
 
+		virtual bool operator==(const CTexture& InOther) const override { return RendererID == ((COpenGLTexture2D&)InOther).RendererID; };
+
 	private:
 		std::string Path;
 

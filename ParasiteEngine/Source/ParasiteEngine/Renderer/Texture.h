@@ -17,6 +17,8 @@ namespace Parasite
 		virtual void SetData(void* InData, uint32_t InSize) = 0;
 
 		virtual void Bind(uint32_t InSlot = 0) const = 0;
+
+		virtual bool operator==(const CTexture& InOther) const = 0;
 	};
 	
 
