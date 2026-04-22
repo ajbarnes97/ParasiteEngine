@@ -36,8 +36,9 @@ namespace Parasite
 		SQuadVertex* QuadVertexBufferPtr = nullptr;
 
 		std::array<TSharedPtr<CTexture>, MaxTextureSlots> TextureSlots;
-		// Slot 0 = white texture
-		uint32_t TextureSlotIndex = 1;
+		uint32_t TextureSlotIndex = 1; // Slot 0 = white texture
+
+		glm::vec4 QuadVertexPositions[4];
 	};
 	static SRenderer2DData Data;
 
@@ -49,11 +50,11 @@ namespace Parasite
 		Data.QuadVertexBuffer = CVertexBuffer::Create(Data.MaxVertices  * sizeof(SQuadVertex));
 		Data.QuadVertexBuffer->SetLayout(
 			{
-				{ EShaderDataType::Float3, "a_Position" },
-				{ EShaderDataType::Float4, "a_Colour" },
-				{ EShaderDataType::Float2, "a_TexCoord" },
-				{ EShaderDataType::Float, "a_TexIndex" },
-				{ EShaderDataType::Float, "a_TilingFactor" },
+				{ EShaderDataType::Float3,	"a_Position" },
+				{ EShaderDataType::Float4,	"a_Colour" },
+				{ EShaderDataType::Float2,	"a_TexCoord" },
+				{ EShaderDataType::Float,	"a_TexIndex" },
+				{ EShaderDataType::Float,	"a_TilingFactor" },
 			}
 		);
 		Data.QuadVertexArray->AddVertexBuffer(Data.QuadVertexBuffer);
@@ -85,7 +86,7 @@ namespace Parasite
 		Data.WhiteTexture->SetData(&TextureData, sizeof(TextureData));
 
 		int32_t Samplers[Data.MaxTextureSlots];
-		for (int32_t Index = 0; Index < Data.TextureSlotIndex; Index++)
+		for (uint32_t Index = 0; Index < Data.MaxTextureSlots; Index++)
 		{
 			Samplers[Index] = Index;
 		}
@@ -95,6 +96,11 @@ namespace Parasite
 		Data.TextureShader->SetIntArray("u_Textures", Samplers, Data.MaxTextureSlots);
 
 		Data.TextureSlots[0] = Data.WhiteTexture;
+
+		Data.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
+		Data.QuadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
+		Data.QuadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
+		Data.QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 	}
 
 	void CRenderer2D::Shutdown()
@@ -139,28 +145,31 @@ namespace Parasite
 		float TexIndex = 0;
 		float TilingFactor = 1.0f;
 
-		Data.QuadVertexBufferPtr->Position = InPosition;
+		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), InPosition)
+			* glm::scale(glm::mat4(1.0f), { InSize.x, InSize.y, 1.0f });
+
+		Data.QuadVertexBufferPtr->Position = Transform * Data.QuadVertexPositions[0];
 		Data.QuadVertexBufferPtr->Colour = InColour;
 		Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
 		Data.QuadVertexBufferPtr->TexIndex = TexIndex;
 		Data.QuadVertexBufferPtr->TilingFactor = TilingFactor;
 		Data.QuadVertexBufferPtr++;
 
-		Data.QuadVertexBufferPtr->Position = { InPosition.x + InSize.x, InPosition.y, 0.0f };
+		Data.QuadVertexBufferPtr->Position = Transform * Data.QuadVertexPositions[1];
 		Data.QuadVertexBufferPtr->Colour = InColour;
 		Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
 		Data.QuadVertexBufferPtr->TexIndex = TexIndex;
 		Data.QuadVertexBufferPtr->TilingFactor = TilingFactor;
 		Data.QuadVertexBufferPtr++;
 
-		Data.QuadVertexBufferPtr->Position = { InPosition.x + InSize.x, InPosition.y + InSize.y, 0.0f };
+		Data.QuadVertexBufferPtr->Position = Transform * Data.QuadVertexPositions[2];
 		Data.QuadVertexBufferPtr->Colour = InColour;
 		Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
 		Data.QuadVertexBufferPtr->TexIndex = TexIndex;
 		Data.QuadVertexBufferPtr->TilingFactor = TilingFactor;
 		Data.QuadVertexBufferPtr++;
 
-		Data.QuadVertexBufferPtr->Position = { InPosition.x, InPosition.y + InSize.y, 0.0f };
+		Data.QuadVertexBufferPtr->Position = Transform * Data.QuadVertexPositions[3];
 		Data.QuadVertexBufferPtr->Colour = InColour;
 		Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
 		Data.QuadVertexBufferPtr->TexIndex = TexIndex;
@@ -168,16 +177,6 @@ namespace Parasite
 		Data.QuadVertexBufferPtr++;
 
 		Data.QuadIndexCount += 6;
-
-		//Data.TextureShader->SetFloat("u_TilingFactor", 1.0f);
-		//Data.WhiteTexture->Bind();
-		//
-		//glm::mat4 Transform = glm::translate(glm::mat4(1.0f), InPosition) 
-		//	* glm::scale(glm::mat4(1.0f), {InSize.x, InSize.y, 1.0f});
-		//Data.TextureShader->SetMat4("u_Transform", Transform);
-		//
-		//Data.QuadVertexArray->Bind();
-		//CRenderCommand::DrawIndexed(Data.QuadVertexArray);
 	}
 
 	void CRenderer2D::DrawQuad(const glm::vec2& InPosition, const glm::vec2& InSize, const TSharedPtr<CTexture>& InTexture, const float InTilingFactor, const glm::vec4& InTintColour)
@@ -190,12 +189,11 @@ namespace Parasite
 		constexpr glm::vec4 Colour = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 		float TextureIndex = 0.0f;
-		
 		for (uint32_t Index = 1; Index < Data.TextureSlotIndex; Index++)
 		{
 			if (*Data.TextureSlots[Index].get() == *InTexture.get())
 			{
-				TextureIndex = static_cast<float>(Index);
+				TextureIndex = (float)Index;
 				break;
 			}
 		}
@@ -207,28 +205,31 @@ namespace Parasite
 			Data.TextureSlotIndex++;
 		}
 
-		Data.QuadVertexBufferPtr->Position = InPosition;
+		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), InPosition)
+			* glm::scale(glm::mat4(1.0f), { InSize.x, InSize.y, 1.0f });
+
+		Data.QuadVertexBufferPtr->Position = Transform * Data.QuadVertexPositions[0];
 		Data.QuadVertexBufferPtr->Colour = Colour;
 		Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
 		Data.QuadVertexBufferPtr->TexIndex = TextureIndex;
 		Data.QuadVertexBufferPtr->TilingFactor = InTilingFactor;
 		Data.QuadVertexBufferPtr++;
 
-		Data.QuadVertexBufferPtr->Position = { InPosition.x + InSize.x, InPosition.y, 0.0f };
+		Data.QuadVertexBufferPtr->Position = Transform * Data.QuadVertexPositions[1];
 		Data.QuadVertexBufferPtr->Colour = InTintColour;
 		Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
 		Data.QuadVertexBufferPtr->TexIndex = TextureIndex;
 		Data.QuadVertexBufferPtr->TilingFactor = InTilingFactor;
 		Data.QuadVertexBufferPtr++;
 
-		Data.QuadVertexBufferPtr->Position = { InPosition.x + InSize.x, InPosition.y + InSize.y, 0.0f };
+		Data.QuadVertexBufferPtr->Position = Transform * Data.QuadVertexPositions[2];
 		Data.QuadVertexBufferPtr->Colour = InTintColour;
 		Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
 		Data.QuadVertexBufferPtr->TexIndex = TextureIndex;
 		Data.QuadVertexBufferPtr->TilingFactor = InTilingFactor;
 		Data.QuadVertexBufferPtr++;
 
-		Data.QuadVertexBufferPtr->Position = { InPosition.x, InPosition.y + InSize.y, 0.0f };
+		Data.QuadVertexBufferPtr->Position = Transform * Data.QuadVertexPositions[3];
 		Data.QuadVertexBufferPtr->Colour = InTintColour;
 		Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
 		Data.QuadVertexBufferPtr->TexIndex = TextureIndex;
@@ -236,50 +237,102 @@ namespace Parasite
 		Data.QuadVertexBufferPtr++;
 
 		Data.QuadIndexCount += 6;
-
-		//Data.TextureShader->SetFloat4("u_Colour", InTintColour);
-		//Data.TextureShader->SetFloat("u_TilingFactor", InTilingFactor);
-		//Data.TextureShader->Bind();
-		//
-		//glm::mat4 Transform = glm::translate(glm::mat4(1.0f), InPosition) 
-		//	* glm::scale(glm::mat4(1.0f), { InSize.x, InSize.y, 1.0f });
-		//Data.TextureShader->SetMat4("u_Transform", Transform);
-		//
-		//InTexture->Bind();
-		//
-		//Data.QuadVertexArray->Bind();
-		//CRenderCommand::DrawIndexed(Data.QuadVertexArray);
 	}
 
 	void CRenderer2D::DrawRotatedQuad(const glm::vec3& InPosition, const glm::vec2& InSize, const float InRotation, const glm::vec4 InColour)
 	{
-		Data.TextureShader->SetFloat4("u_Colour", InColour);
-		Data.TextureShader->SetFloat("u_TilingFactor", 1.0f);
-		Data.WhiteTexture->Bind();
+		// White texture
+		float TexIndex = 0;
+		float TilingFactor = 1.0f;
 
-		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), InPosition) 
-			* glm::rotate(glm::mat4(1.0f), InRotation, { 0.0f, 0.0f, 1.0f })
+		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), InPosition)
+			* glm::rotate(glm::mat4(1.0f), glm::radians(InRotation), { 0.0f, 0.0f, 1.0f })
 			* glm::scale(glm::mat4(1.0f), { InSize.x, InSize.y, 1.0f });
-		Data.TextureShader->SetMat4("u_Transform", Transform);
 
-		Data.QuadVertexArray->Bind();
-		CRenderCommand::DrawIndexed(Data.QuadVertexArray);
+		Data.QuadVertexBufferPtr->Position = Transform * Data.QuadVertexPositions[0];
+		Data.QuadVertexBufferPtr->Colour = InColour;
+		Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
+		Data.QuadVertexBufferPtr->TexIndex = TexIndex;
+		Data.QuadVertexBufferPtr->TilingFactor = TilingFactor;
+		Data.QuadVertexBufferPtr++;
+
+		Data.QuadVertexBufferPtr->Position = Transform * Data.QuadVertexPositions[1];
+		Data.QuadVertexBufferPtr->Colour = InColour;
+		Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
+		Data.QuadVertexBufferPtr->TexIndex = TexIndex;
+		Data.QuadVertexBufferPtr->TilingFactor = TilingFactor;
+		Data.QuadVertexBufferPtr++;
+
+		Data.QuadVertexBufferPtr->Position = Transform * Data.QuadVertexPositions[2];
+		Data.QuadVertexBufferPtr->Colour = InColour;
+		Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
+		Data.QuadVertexBufferPtr->TexIndex = TexIndex;
+		Data.QuadVertexBufferPtr->TilingFactor = TilingFactor;
+		Data.QuadVertexBufferPtr++;
+
+		Data.QuadVertexBufferPtr->Position = Transform * Data.QuadVertexPositions[3];
+		Data.QuadVertexBufferPtr->Colour = InColour;
+		Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
+		Data.QuadVertexBufferPtr->TexIndex = TexIndex;
+		Data.QuadVertexBufferPtr->TilingFactor = TilingFactor;
+		Data.QuadVertexBufferPtr++;
+
+		Data.QuadIndexCount += 6;
 	}
 
 	void CRenderer2D::DrawRotatedQuad(const glm::vec3& InPosition, const glm::vec2& InSize, const float InRotation, const TSharedPtr<CTexture>& InTexture, const float InTilingFactor, const glm::vec4& InTintColour)
 	{
-		Data.TextureShader->SetFloat4("u_Colour", InTintColour);
-		Data.TextureShader->SetFloat("u_TilingFactor", InTilingFactor);
-		Data.TextureShader->Bind();
+		constexpr glm::vec4 Colour = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+		float TextureIndex = 0.0f;
+		for (uint32_t Index = 1; Index < Data.TextureSlotIndex; Index++)
+		{
+			if (*Data.TextureSlots[Index].get() == *InTexture.get())
+			{
+				TextureIndex = (float)Index;
+				break;
+			}
+		}
+
+		if (TextureIndex == 0.0f)
+		{
+			TextureIndex = static_cast<float>(Data.TextureSlotIndex);
+			Data.TextureSlots[Data.TextureSlotIndex] = InTexture;
+			Data.TextureSlotIndex++;
+		}
 
 		glm::mat4 Transform = glm::translate(glm::mat4(1.0f), InPosition)
-			* glm::rotate(glm::mat4(1.0f), InRotation, { 0.0f, 0.0f, 1.0f })
+			* glm::rotate(glm::mat4(1.0f), glm::radians(InRotation), { 0.0f, 0.0f, 1.0f })
 			* glm::scale(glm::mat4(1.0f), { InSize.x, InSize.y, 1.0f });
-		Data.TextureShader->SetMat4("u_Transform", Transform);
 
-		InTexture->Bind();
+		Data.QuadVertexBufferPtr->Position = Transform * Data.QuadVertexPositions[0];
+		Data.QuadVertexBufferPtr->Colour = Colour;
+		Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
+		Data.QuadVertexBufferPtr->TexIndex = TextureIndex;
+		Data.QuadVertexBufferPtr->TilingFactor = InTilingFactor;
+		Data.QuadVertexBufferPtr++;
 
-		Data.QuadVertexArray->Bind();
-		CRenderCommand::DrawIndexed(Data.QuadVertexArray);
+		Data.QuadVertexBufferPtr->Position = Transform * Data.QuadVertexPositions[1];
+		Data.QuadVertexBufferPtr->Colour = InTintColour;
+		Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
+		Data.QuadVertexBufferPtr->TexIndex = TextureIndex;
+		Data.QuadVertexBufferPtr->TilingFactor = InTilingFactor;
+		Data.QuadVertexBufferPtr++;
+
+		Data.QuadVertexBufferPtr->Position = Transform * Data.QuadVertexPositions[2];
+		Data.QuadVertexBufferPtr->Colour = InTintColour;
+		Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
+		Data.QuadVertexBufferPtr->TexIndex = TextureIndex;
+		Data.QuadVertexBufferPtr->TilingFactor = InTilingFactor;
+		Data.QuadVertexBufferPtr++;
+
+		Data.QuadVertexBufferPtr->Position = Transform * Data.QuadVertexPositions[3];
+		Data.QuadVertexBufferPtr->Colour = InTintColour;
+		Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
+		Data.QuadVertexBufferPtr->TexIndex = TextureIndex;
+		Data.QuadVertexBufferPtr->TilingFactor = InTilingFactor;
+		Data.QuadVertexBufferPtr++;
+
+		Data.QuadIndexCount += 6;
 	}
 }

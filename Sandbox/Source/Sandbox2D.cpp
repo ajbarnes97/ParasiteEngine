@@ -31,9 +31,9 @@ void CSandbox2D::OnUpdate(CTimestep InTimestep)
 
 	CRenderer2D::DrawQuad({ 0.4f, -1.0f, 0.0f }, { 2.0f, 0.4f }, {0.2f, 0.8f, 0.8f, 1.0f});
 	CRenderer2D::DrawQuad({ 0.0f, 1.0f, 0.0f }, { 2.0f, 0.4f }, {0.5f, 0.2f, 0.2f, 1.0f});
-	//CRenderer2D::DrawRotatedQuad({ 0.4f, -1.0f, 0.0f }, { 2.0f, 0.4f }, glm::radians(-25.0f), {0.2f, 0.8f, 0.8f, 1.0f});
-	CRenderer2D::DrawQuad({ -5.0f, -5.0f, -0.1f }, { 10.0f, 10.0f }, Texture, 10.0f);
-	//CRenderer2D::DrawQuad({ -5.0f, -5.0f, -0.1f }, { 10.0f, 10.0f }, Texture, 20.0f);
+	CRenderer2D::DrawRotatedQuad({ 0.4f, -1.0f, -0.2f }, { 2.0f, 0.4f }, 25.0f, {0.2f, 0.8f, 0.8f, 1.0f});
+	CRenderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, Texture, 10.0f, { 1.0f, 0.2, 0.8f, 1.0f });
+	CRenderer2D::DrawRotatedQuad({ -2.0f, -0.0f, 0.0f }, { 1.0f, 1.0f }, -25.0f, Texture, 20.0f, { 0.7f, 0.7, 0.2f, 1.0f });
 
 	CRenderer2D::EndScene();
 }
