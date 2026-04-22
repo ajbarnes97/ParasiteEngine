@@ -36,6 +36,17 @@ void CSandbox2D::OnUpdate(CTimestep InTimestep)
 	CRenderer2D::DrawRotatedQuad({ -2.0f, -0.0f, 0.0f }, { 1.0f, 1.0f }, -25.0f, Texture, 20.0f, { 0.7f, 0.7, 0.2f, 1.0f });
 
 	CRenderer2D::EndScene();
+
+	CRenderer2D::BeginScene(Camera.GetCamera());
+	for (float y = -5.0f; y < 5.0f; y += 0.5f)
+	{
+		for (float x = -5.0f; x < 5.0f; x += 0.5f)
+		{
+			glm::vec4 Colour = { (x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.5f };
+			CRenderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, Colour);
+		}
+	}
+	CRenderer2D::EndScene();
 }
 
 void CSandbox2D::OnImGuiRender()

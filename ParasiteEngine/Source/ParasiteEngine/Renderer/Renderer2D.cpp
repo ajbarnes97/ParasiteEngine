@@ -21,9 +21,9 @@ namespace Parasite
 
 	struct SRenderer2DData
 	{
-		const uint32_t MaxQuads = 10000;
-		const uint32_t MaxVertices = MaxQuads * 4;
-		const uint32_t MaxIndices = MaxQuads * 6;
+		static const uint32_t MaxQuads = 10000;
+		static const uint32_t MaxVertices = MaxQuads * 4;
+		static const uint32_t MaxIndices = MaxQuads * 6;
 		static const uint32_t MaxTextureSlots = 32;
 
 		TSharedPtr<CVertexArray> QuadVertexArray;
@@ -141,6 +141,11 @@ namespace Parasite
 
 	void CRenderer2D::DrawQuad(const glm::vec3& InPosition, const glm::vec2& InSize, const glm::vec4 InColour)
 	{
+		if (Data.QuadIndexCount >= SRenderer2DData::MaxIndices)
+		{
+			FlushAndReset();
+		}
+
 		// White texture
 		float TexIndex = 0;
 		float TilingFactor = 1.0f;
@@ -186,6 +191,11 @@ namespace Parasite
 
 	void CRenderer2D::DrawQuad(const glm::vec3& InPosition, const glm::vec2& InSize, const TSharedPtr<CTexture>& InTexture, const float InTilingFactor, const glm::vec4& InTintColour)
 	{
+		if (Data.QuadIndexCount >= SRenderer2DData::MaxIndices)
+		{
+			FlushAndReset();
+		}
+
 		constexpr glm::vec4 Colour = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 		float TextureIndex = 0.0f;
@@ -193,14 +203,14 @@ namespace Parasite
 		{
 			if (*Data.TextureSlots[Index].get() == *InTexture.get())
 			{
-				TextureIndex = (float)Index;
+				TextureIndex = static_cast<float>(Index);
 				break;
 			}
 		}
 
 		if (TextureIndex == 0.0f)
 		{
-			TextureIndex = (float)Data.TextureSlotIndex;
+			TextureIndex = static_cast<float>(Data.TextureSlotIndex);
 			Data.TextureSlots[Data.TextureSlotIndex] = InTexture;
 			Data.TextureSlotIndex++;
 		}
@@ -241,6 +251,11 @@ namespace Parasite
 
 	void CRenderer2D::DrawRotatedQuad(const glm::vec3& InPosition, const glm::vec2& InSize, const float InRotation, const glm::vec4 InColour)
 	{
+		if (Data.QuadIndexCount >= SRenderer2DData::MaxIndices)
+		{
+			FlushAndReset();
+		}
+
 		// White texture
 		float TexIndex = 0;
 		float TilingFactor = 1.0f;
@@ -282,6 +297,11 @@ namespace Parasite
 
 	void CRenderer2D::DrawRotatedQuad(const glm::vec3& InPosition, const glm::vec2& InSize, const float InRotation, const TSharedPtr<CTexture>& InTexture, const float InTilingFactor, const glm::vec4& InTintColour)
 	{
+		if (Data.QuadIndexCount >= SRenderer2DData::MaxIndices)
+		{
+			FlushAndReset();
+		}
+
 		constexpr glm::vec4 Colour = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 		float TextureIndex = 0.0f;
@@ -289,7 +309,7 @@ namespace Parasite
 		{
 			if (*Data.TextureSlots[Index].get() == *InTexture.get())
 			{
-				TextureIndex = (float)Index;
+				TextureIndex = static_cast<float>(Index);
 				break;
 			}
 		}
@@ -334,5 +354,14 @@ namespace Parasite
 		Data.QuadVertexBufferPtr++;
 
 		Data.QuadIndexCount += 6;
+	}
+
+	void CRenderer2D::FlushAndReset()
+	{
+		EndScene();
+
+		Data.QuadIndexCount = 0;
+		Data.QuadVertexBufferPtr = Data.QuadVertexBufferBase;
+		Data.TextureSlotIndex = 1;
 	}
 }
