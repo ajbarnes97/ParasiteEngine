@@ -11,7 +11,8 @@ namespace Parasite
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glEnable(GL_DEPTH_TEST);
+		// todo: this breaks alpha in 2d renderer
+		//glEnable(GL_DEPTH_TEST);
 	}
 
 	void COpenGLRendererAPI::SetViewport(uint32_t InX, uint32_t InY, uint32_t InWidth, uint32_t InHeight)

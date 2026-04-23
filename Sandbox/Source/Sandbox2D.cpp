@@ -14,6 +14,9 @@ CSandbox2D::CSandbox2D() : CLayer("Sandbox2D")
 void CSandbox2D::OnAttach()
 {
 	Texture = CTexture2D::Create("Assets/Textures/Checkerboard.png");
+	SpriteSheet = CTexture2D::Create("Assets/Textures/TextureSheet.png");
+
+	SubTexture = CSubTexture2D::CreateFromCoords(SpriteSheet, { 2, 1 }, { 128, 128 }, { 1, 2 });
 }
 
 void CSandbox2D::OnDetach()
@@ -28,16 +31,6 @@ void CSandbox2D::OnUpdate(CTimestep InTimestep)
 	CRenderCommand::Clear();
 
 	CRenderer2D::BeginScene(Camera.GetCamera());
-
-	CRenderer2D::DrawQuad({ 0.4f, -1.0f, 0.0f }, { 2.0f, 0.4f }, {0.2f, 0.8f, 0.8f, 1.0f});
-	CRenderer2D::DrawQuad({ 0.0f, 1.0f, 0.0f }, { 2.0f, 0.4f }, {0.5f, 0.2f, 0.2f, 1.0f});
-	CRenderer2D::DrawRotatedQuad({ 0.4f, -1.0f, -0.2f }, { 2.0f, 0.4f }, 25.0f, {0.2f, 0.8f, 0.8f, 1.0f});
-	CRenderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, Texture, 10.0f, { 1.0f, 0.2, 0.8f, 1.0f });
-	CRenderer2D::DrawRotatedQuad({ -2.0f, -0.0f, 0.0f }, { 1.0f, 1.0f }, -25.0f, Texture, 20.0f, { 0.7f, 0.7, 0.2f, 1.0f });
-
-	CRenderer2D::EndScene();
-
-	CRenderer2D::BeginScene(Camera.GetCamera());
 	for (float y = -5.0f; y < 5.0f; y += 0.5f)
 	{
 		for (float x = -5.0f; x < 5.0f; x += 0.5f)
@@ -46,6 +39,14 @@ void CSandbox2D::OnUpdate(CTimestep InTimestep)
 			CRenderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, Colour);
 		}
 	}
+	CRenderer2D::EndScene();
+
+	CRenderer2D::BeginScene(Camera.GetCamera());
+	//CRenderer2D::DrawQuad({ 0.4f, -1.0f, 0.0f }, { 2.0f, 0.4f }, {0.2f, 0.8f, 0.8f, 1.0f});
+	//CRenderer2D::DrawQuad({ 0.0f, 1.0f, 0.0f }, { 2.0f, 0.4f }, {0.5f, 0.2f, 0.2f, 1.0f});
+	//CRenderer2D::DrawRotatedQuad({ 0.4f, -1.0f, -0.2f }, { 2.0f, 0.4f }, 25.0f, {0.2f, 0.8f, 0.8f, 1.0f});
+	//CRenderer2D::DrawRotatedQuad({ -2.0f, -0.0f, 0.0f }, { 1.0f, 1.0f }, -25.0f, Texture, 20.0f, { 0.7f, 0.7, 0.2f, 1.0f });
+	CRenderer2D::DrawQuad({ 0.0f, 0.0f, 1.0f }, { 1.0f, 2.0f }, SubTexture);
 	CRenderer2D::EndScene();
 }
 

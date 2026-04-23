@@ -28,6 +28,8 @@ private:
 	TSharedPtr<CShader> FlatColourShader;
 
 	TSharedPtr<CTexture2D> Texture;
+	TSharedPtr<CTexture2D> SpriteSheet;
+	TSharedPtr<CSubTexture2D> SubTexture;
 
 	glm::vec4 SqaureColour = { 0.2f, 0.3f, 0.8f, 1.0f };
 };
