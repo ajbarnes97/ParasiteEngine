@@ -30,6 +30,7 @@ private:
 	TSharedPtr<CTexture2D> Texture;
 	TSharedPtr<CTexture2D> SpriteSheet;
 	TSharedPtr<CSubTexture2D> SubTexture;
+	TSharedPtr<CFrameBuffer> FrameBuffer;
 
 	glm::vec4 SqaureColour = { 0.2f, 0.3f, 0.8f, 1.0f };
 };

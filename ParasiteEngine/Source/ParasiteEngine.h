@@ -21,6 +21,7 @@
 #include "ParasiteEngine/Renderer/Shader.h"
 #include "ParasiteEngine/Renderer/Texture.h"
 #include "ParasiteEngine/Renderer/SubTexture2D.h"
+#include "ParasiteEngine/Renderer/FrameBuffer.h"
 #include "ParasiteEngine/Renderer/VertexArray.h"
 
 #include "ParasiteEngine/Renderer/CameraController.h"

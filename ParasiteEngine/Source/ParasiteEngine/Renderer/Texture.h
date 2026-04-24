@@ -14,6 +14,8 @@ namespace Parasite
 		inline virtual uint32_t GetWidth() const = 0;
 		inline virtual uint32_t GetHeight() const = 0;
 
+		inline virtual uint32_t GetRendererID() const = 0;
+
 		virtual void SetData(void* InData, uint32_t InSize) = 0;
 
 		virtual void Bind(uint32_t InSlot = 0) const = 0;

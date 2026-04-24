@@ -59,6 +59,12 @@ namespace Parasite
 		}
 	}
 
+
+	void CApplication::Close()
+	{
+		bRunning = false;
+	}
+
 	void CApplication::OnEvent(CEvent& InEvent)
 	{
 		CEventDispatcher EventDispatcher(InEvent);

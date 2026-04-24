@@ -181,15 +181,6 @@ public:
 		OrthoCamera.OnEvent(InEvent);
 	}
 
-	virtual void  OnImGuiRender() override
-	{
-		ImGui::Begin("Settings");
-
-		ImGui::ColorEdit3("Square Colour:", glm::value_ptr(SqaureColour));
-
-		ImGui::End();
-	}
-
 private:
 	CShaderLibirary ShaderLibirary;
 	TSharedPtr<CVertexArray> VertexArray;

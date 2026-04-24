@@ -16,6 +16,8 @@ namespace Parasite
 		virtual ~CApplication();
 
 		void Run();
+		void Close();
+
 		void OnEvent(CEvent& InEvent);
 
 		void PushLayer(CLayer* InLayer);

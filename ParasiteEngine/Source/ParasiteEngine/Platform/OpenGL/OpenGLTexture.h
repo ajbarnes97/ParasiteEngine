@@ -18,6 +18,8 @@ namespace Parasite
 		inline virtual uint32_t GetWidth() const override { return Width; }
 		inline virtual uint32_t GetHeight() const override { return Height; }
 
+		inline virtual uint32_t GetRendererID() const { return RendererID; }
+
 		virtual void Bind(uint32_t InSlot) const override;
 
 		virtual bool operator==(const CTexture& InOther) const override { return RendererID == ((COpenGLTexture2D&)InOther).RendererID; };
