@@ -19,6 +19,12 @@ IncludeDir["ImGui"] = "ParasiteEngine/Vendor/ImGui"
 IncludeDir["glm"] = "ParasiteEngine/Vendor/glm"
 IncludeDir["stb_image"] = "ParasiteEngine/Vendor/stb_image"
 
+group "Dependencies"
+	include "ParasiteEngine/Vendor/GLFW"
+	include "ParasiteEngine/Vendor/Glad"
+	include "ParasiteEngine/Vendor/ImGui"
+group ""
+
 -- Add premake files
 include "ParasiteEngine/Vendor/GLFW"
 include "ParasiteEngine/Vendor/Glad"
@@ -101,6 +107,66 @@ project "ParasiteEngine"
 			optimize "on"
 
 
+project "ParasiteEditor"
+	location "ParasiteEditor"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++20"
+	staticruntime "on"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	debugdir "%{prj.location}" -- Temp
+
+	buildoptions 
+	{ 
+		"/utf-8",
+	}
+
+	files
+	{
+		"%{prj.name}/Source/**.h",
+		"%{prj.name}/Source/**.cpp",
+	}
+
+	includedirs
+	{
+		"ParasiteEngine/Vendor/spdlog/include",
+		"ParasiteEngine/Source",
+		"ParasiteEngine/Vendor",
+		"%{IncludeDir.glm}",
+	}
+
+	links
+	{
+		"ParasiteEngine"
+	}
+
+	filter "system:windows"
+		systemversion "latest"
+
+		defines
+		{
+			"PE_PLATFORM_WINDOWS",
+		}
+
+		filter "configurations:Debug"
+			defines "PE_DEBUG"
+			runtime "Debug"
+			symbols "on"
+
+		filter "configurations:Release"
+			defines "PE_Release"
+			runtime "Release"
+			optimize "on"
+
+		filter "configurations:Dist"
+			defines "PE_DIST"
+			runtime "Release"
+			optimize "on"
+
+
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
@@ -159,3 +225,4 @@ project "Sandbox"
 			defines "PE_DIST"
 			runtime "Release"
 			optimize "on"
+

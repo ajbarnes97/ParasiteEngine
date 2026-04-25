@@ -14,12 +14,12 @@ namespace Parasite
 {
 	CApplication* CApplication::Instance = nullptr;
 
-	CApplication::CApplication()
+	CApplication::CApplication(const std::string& InWindowName)
 	{
 		PE_CORE_ASSERT(!Instance, "An Application already exists.");
 		Instance = this;
 
-		Window = TWeakPtr<CWindow>(CWindow::Create());
+		Window = TWeakPtr<CWindow>(CWindow::Create(SWindowInfo(InWindowName)));
 		Window->SetEventCallback(std::bind(&CApplication::OnEvent, this, std::placeholders::_1));
 
 		CRenderer::Init();

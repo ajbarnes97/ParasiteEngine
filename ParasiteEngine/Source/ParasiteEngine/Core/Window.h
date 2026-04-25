@@ -11,18 +11,17 @@ namespace Parasite
 	struct SWindowInfo
 	{
 		SWindowInfo(const std::string& InTitle = "Parasite Engine",
-					unsigned int InWidth = 1280,
-					unsigned int InHeight = 720)
+					uint32_t InWidth = 1280,
+					uint32_t InHeight = 720)
 			: Title(InTitle),
 				Width(InWidth),
 				Height(InHeight)
 		{
-
 		}
 
 		std::string Title;
-		unsigned int Width;
-		unsigned int Height;
+		uint32_t Width;
+		uint32_t Height;
 	};
 
 	
@@ -38,8 +37,8 @@ namespace Parasite
 
 		virtual void Update() = 0;
 
-		virtual unsigned int GetWidth() const = 0;
-		virtual unsigned int GetHeight() const = 0;
+		virtual uint32_t GetWidth() const = 0;
+		virtual uint32_t GetHeight() const = 0;
 
 		virtual void SetEventCallback(const EventCallbackFunc& InCallbackFunc) = 0;
 		virtual void SetVSyncEnabled(bool bInEnabled) = 0;

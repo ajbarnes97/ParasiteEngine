@@ -18,8 +18,8 @@ namespace Parasite
 
 		virtual void Update() override;
 
-		virtual unsigned int GetWidth() const override { return WindowData.Width; };
-		virtual unsigned int GetHeight() const override { return WindowData.Height; };
+		virtual uint32_t GetWidth() const override { return WindowData.Width; };
+		virtual uint32_t GetHeight() const override { return WindowData.Height; };
 
 		virtual void SetEventCallback(const EventCallbackFunc& InCallbackFunc) override { WindowData.EventCallback = InCallbackFunc; };
 		virtual void SetVSyncEnabled(bool bInEnabled) override;
@@ -45,8 +45,8 @@ namespace Parasite
 				Title = InInfo.Title;
 			}
 
-			unsigned int Width;
-			unsigned int Height;
+			uint32_t Width;
+			uint32_t Height;
 			std::string Title;
 
 			bool bVSyncEnabled = true;

@@ -12,7 +12,7 @@ namespace Parasite
 	class PARASITE_API CApplication
 	{
 	public:
-		CApplication();
+		CApplication(const std::string& InWindowName = "Parasite Engine");
 		virtual ~CApplication();
 
 		void Run();
