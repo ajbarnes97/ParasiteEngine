@@ -17,6 +17,8 @@ namespace Parasite
 		void OnUpdate(CTimestep InTimestep);
 		void OnEvent(CEvent& InEvent);
 
+		void ResizeBounds(float InWidth, float InHeight);
+
 		inline const COrthographicCamera& GetCamera() const { return Camera; };
 		inline COrthographicCamera& GetCamera() { return Camera; };
 

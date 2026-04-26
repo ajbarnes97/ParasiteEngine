@@ -15,10 +15,33 @@ namespace Parasite
 	COpenGLFrameBuffer::~COpenGLFrameBuffer()
 	{
 		glDeleteFramebuffers(1, &RendererID);
+		glDeleteTextures(1, &ColourAttachment);
+		glDeleteTextures(1, &DepthAttachment);
+	}
+
+	void COpenGLFrameBuffer::Resize(uint32_t InWindowSizeX, uint32_t InWindowSizeY)
+	{
+		if (InWindowSizeX == 0 || InWindowSizeY == 0)
+		{
+			PE_WARN("Attempting to resize window to an invalid size.");
+			return;
+		}
+
+		Specification.Width = InWindowSizeX;
+		Specification.Height = InWindowSizeY;
+
+		Invalidate();
 	}
 
 	void COpenGLFrameBuffer::Invalidate()
 	{
+		if (RendererID)
+		{
+			glDeleteFramebuffers(1, &RendererID);
+			glDeleteTextures(1, &ColourAttachment);
+			glDeleteTextures(1, &DepthAttachment);
+		}
+
 		glCreateFramebuffers(1, &RendererID);
 		glBindFramebuffer(GL_FRAMEBUFFER, RendererID);
 
@@ -33,7 +56,6 @@ namespace Parasite
 		glCreateTextures(GL_TEXTURE_2D, 1, &DepthAttachment);
 		glBindTexture(GL_TEXTURE_2D, DepthAttachment);
 		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, Specification.Width, Specification.Height);
-		//glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, Specification.Width, Specification.Height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, DepthAttachment, 0);
 
 		PE_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
@@ -44,6 +66,7 @@ namespace Parasite
 	void COpenGLFrameBuffer::Bind()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, RendererID);
+		glViewport(0, 0, Specification.Width, Specification.Height);
 	}
 
 	void COpenGLFrameBuffer::Unbind()

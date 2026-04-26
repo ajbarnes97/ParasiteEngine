@@ -52,10 +52,6 @@ namespace Parasite
 		CRenderer2D::EndScene();
 
 		CRenderer2D::BeginScene(Camera.GetCamera());
-		//CRenderer2D::DrawQuad({ 0.4f, -1.0f, 0.0f }, { 2.0f, 0.4f }, {0.2f, 0.8f, 0.8f, 1.0f});
-		//CRenderer2D::DrawQuad({ 0.0f, 1.0f, 0.0f }, { 2.0f, 0.4f }, {0.5f, 0.2f, 0.2f, 1.0f});
-		//CRenderer2D::DrawRotatedQuad({ 0.4f, -1.0f, -0.2f }, { 2.0f, 0.4f }, 25.0f, {0.2f, 0.8f, 0.8f, 1.0f});
-		//CRenderer2D::DrawRotatedQuad({ -2.0f, -0.0f, 0.0f }, { 1.0f, 1.0f }, -25.0f, Texture, 20.0f, { 0.7f, 0.7, 0.2f, 1.0f });
 		CRenderer2D::DrawQuad({ 0.0f, 0.0f, 1.0f }, { 1.0f, 2.0f }, SubTexture);
 		CRenderer2D::EndScene();
 
@@ -84,8 +80,8 @@ namespace Parasite
 
 		ImGui::PopStyleVar(2);
 
-		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), DockspaceFlags);
+		ImGuiID DockspaceID = ImGui::GetID("MyDockSpace");
+		ImGui::DockSpace(DockspaceID, ImVec2(0.0f, 0.0f), DockspaceFlags);
 
 		if (ImGui::BeginMenuBar())
 		{
@@ -101,9 +97,24 @@ namespace Parasite
 		}
 		ImGui::End();
 
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImGui::Begin("Viewport");
+		ImVec2 WindowSize = ImGui::GetContentRegionAvail();
+		if (WindowSize.x != ViewportSize.x || WindowSize.y != ViewportSize.y)
+		{
+			ViewportSize = { WindowSize.x, WindowSize.y };
+			FrameBuffer->Resize(static_cast<uint32_t>(ViewportSize.x), static_cast<uint32_t>(ViewportSize.y));
+		
+			Camera.ResizeBounds(ViewportSize.x, ViewportSize.y);
+		}
+		ImGui::Image((void*)(uintptr_t)FrameBuffer->GetColourAttachmentRendererID(), { ViewportSize.x, ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::End();
+		ImGui::PopStyleVar();
+
+
 		ImGui::Begin("Settings");
 		ImGui::ColorEdit4("Square Colour:", glm::value_ptr(SqaureColour));
-		ImGui::Image((void*)(uintptr_t)FrameBuffer->GetColourAttachmentRendererID(), { 1280.0f, 720.0f }, ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::End();
 	}
 

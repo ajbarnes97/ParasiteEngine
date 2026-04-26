@@ -19,6 +19,8 @@ namespace Parasite
 		virtual inline const SFrameBufferSpecification& GetSpecification() const = 0;
 		virtual inline uint32_t GetColourAttachmentRendererID() const = 0;
 
+		virtual void Resize(uint32_t InWindowSizeX, uint32_t InWindowSizeY) = 0;
+
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 

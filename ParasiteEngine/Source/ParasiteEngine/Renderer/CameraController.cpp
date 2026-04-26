@@ -58,6 +58,12 @@ namespace Parasite
 		EventDispatcher.Dispatch<CWindowResizeEvent>(PE_BIND_EVENT_FUNC(COrthographicCameraController::OnWindowResize));
 	}
 
+	void COrthographicCameraController::ResizeBounds(float InWidth, float InHeight)
+	{
+		AspectRatio = InWidth / InHeight;
+		Camera.SetProjection(-AspectRatio * ZoomLevel, AspectRatio * ZoomLevel, -ZoomLevel, ZoomLevel);
+	}
+
 	bool COrthographicCameraController::OnMouseScrolledEvent(CMouseScrollEvent& InEvent)
 	{
 		ZoomLevel -= InEvent.GetYOffset();
@@ -68,8 +74,7 @@ namespace Parasite
 
 	bool COrthographicCameraController::OnWindowResize(CWindowResizeEvent& InEvent)
 	{
-		AspectRatio = static_cast<float>(InEvent.GetWidth()) / static_cast<float>(InEvent.GetHeight());
-		Camera.SetProjection(-AspectRatio * ZoomLevel, AspectRatio * ZoomLevel, -ZoomLevel, ZoomLevel);
+		ResizeBounds(static_cast<float>(InEvent.GetWidth()), static_cast<float>(InEvent.GetHeight()));
 		return false;
 	}
 

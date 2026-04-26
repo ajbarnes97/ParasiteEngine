@@ -12,14 +12,16 @@ namespace Parasite
 		virtual inline const SFrameBufferSpecification& GetSpecification() const override { return Specification; }
 		virtual inline uint32_t GetColourAttachmentRendererID() const override { return ColourAttachment; };
 
+		virtual void Resize(uint32_t InWindowSizeX, uint32_t InWindowSizeY) override;
+
 		void Invalidate();
 
 		virtual void Bind() override;
 		virtual void Unbind() override;
 
 	private:
-		uint32_t RendererID;
-		uint32_t ColourAttachment, DepthAttachment;
+		uint32_t RendererID = 0;
+		uint32_t ColourAttachment = 0, DepthAttachment = 0;
 		SFrameBufferSpecification Specification;
 	};
 }
