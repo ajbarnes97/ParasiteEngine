@@ -12,6 +12,10 @@
 #include "ParasiteEngine/Core/MouseButtonCodes.h"
 #include "ParasiteEngine/Core/KeyCodes.h"
 
+#include "ParasiteEngine/Scene/Scene.h"
+#include "ParasiteEngine/Scene/Entity.h"
+#include "ParasiteEngine/Scene/Component.h"
+
 // --- Renderer
 #include "ParasiteEngine/Renderer/Renderer2D.h"
 #include "ParasiteEngine/Renderer/Renderer.h"

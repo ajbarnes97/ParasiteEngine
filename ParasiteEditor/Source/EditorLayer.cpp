@@ -8,7 +8,7 @@
 
 namespace Parasite
 {
-	CEditorLayer::CEditorLayer() : CLayer("Sandbox2D")
+	CEditorLayer::CEditorLayer() : CLayer("Parasite Editor Layer")
 		, Camera(1.7777f, true)
 	{
 	}
@@ -25,6 +25,10 @@ namespace Parasite
 		Specification.Height = 720;
 
 		FrameBuffer = CFrameBuffer::Create(Specification);
+
+		ActiveScene = MakeShared<CScene>();
+		SqaureEntity = ActiveScene->CreateEntity("Sqaure");
+		SqaureEntity.AddComponent<SSpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 1.0f, 1.0f });
 	}
 
 	void CEditorLayer::OnDetach()
@@ -33,7 +37,12 @@ namespace Parasite
 
 	void CEditorLayer::OnUpdate(CTimestep InTimestep)
 	{
-		Camera.OnUpdate(InTimestep);
+		if (bViewportFocused)
+		{
+			Camera.OnUpdate(InTimestep);
+		}
+
+		ActiveScene->OnUpdate(InTimestep);
 
 		FrameBuffer->Bind();
 
@@ -77,7 +86,6 @@ namespace Parasite
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
 		ImGui::Begin("DockSpace", &bOpenDockspace, WindowFlags);
-
 		ImGui::PopStyleVar(2);
 
 		ImGuiID DockspaceID = ImGui::GetID("MyDockSpace");
@@ -100,6 +108,11 @@ namespace Parasite
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::Begin("Viewport");
+
+		bViewportFocused = ImGui::IsWindowFocused();
+		bViewportHovered = ImGui::IsWindowHovered();
+		CApplication::Get().GetImGuiLayer()->SetBlockEvents(!bViewportFocused || !bViewportHovered);
+
 		ImVec2 WindowSize = ImGui::GetContentRegionAvail();
 		if (WindowSize.x != ViewportSize.x || WindowSize.y != ViewportSize.y)
 		{

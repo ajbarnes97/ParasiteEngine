@@ -1,12 +1,12 @@
 #include "pepch.h"
 #include "ImGuiLayer.h"
 
+#include "ParasiteEngine/Core/Application.h"
+#include "ParasiteEngine/Events/Event.h"
+
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
-
-#include "ParasiteEngine/Core/Application.h"
-
 #include "GLFW/glfw3.h"
 #include "glad/glad.h"
 
@@ -54,6 +54,16 @@ namespace Parasite
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
+	}
+
+	void CImGuiLayer::OnEvent(CEvent& InEvent)
+	{
+		if (bBlockEvents)
+		{
+			ImGuiIO& IO = ImGui::GetIO();
+			InEvent.bHandled |= InEvent.IsInCategory(EEventCategory::CategoryMouse) & IO.WantCaptureMouse;
+			InEvent.bHandled |= InEvent.IsInCategory(EEventCategory::CategoryKeyboard) & IO.WantCaptureKeyboard;
+		}
 	}
 
 	void CImGuiLayer::Begin()

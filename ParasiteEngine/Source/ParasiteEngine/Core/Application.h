@@ -26,6 +26,8 @@ namespace Parasite
 		inline static CApplication& Get() { return *Instance; }
 		inline CWindow& GetWindow() { return *Window; }
 
+		inline CImGuiLayer* GetImGuiLayer() { return ImGuiLayer; };
+
 	private:
 		bool OnWindowClose(CWindowCloseEvent& InWindowCloseEvent);
 		bool OnWindowResize(CWindowResizeEvent& InWindowResizeEvent);

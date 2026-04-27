@@ -32,6 +32,10 @@ namespace Parasite
 		TSharedPtr<CSubTexture2D> SubTexture;
 		TSharedPtr<CFrameBuffer> FrameBuffer;
 
+		TSharedPtr<CScene> ActiveScene;
+		CEntity SqaureEntity;
+
+		bool bViewportFocused = false, bViewportHovered = false;
 		glm::vec2 ViewportSize = { 0.0f, 0.0f };
 
 		glm::vec4 SqaureColour = { 0.2f, 0.3f, 0.8f, 1.0f };

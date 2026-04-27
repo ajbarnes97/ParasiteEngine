@@ -18,6 +18,7 @@ IncludeDir["Glad"] = "ParasiteEngine/Vendor/Glad/include"
 IncludeDir["ImGui"] = "ParasiteEngine/Vendor/ImGui"
 IncludeDir["glm"] = "ParasiteEngine/Vendor/glm"
 IncludeDir["stb_image"] = "ParasiteEngine/Vendor/stb_image"
+IncludeDir["entty"] = "ParasiteEngine/Vendor/entty"
 
 group "Dependencies"
 	include "ParasiteEngine/Vendor/GLFW"
@@ -71,6 +72,7 @@ project "ParasiteEngine"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.entty}",
 	}
 
 	links
@@ -136,6 +138,7 @@ project "ParasiteEditor"
 		"ParasiteEngine/Source",
 		"ParasiteEngine/Vendor",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.entty}",
 	}
 
 	links
@@ -196,6 +199,7 @@ project "Sandbox"
 		"ParasiteEngine/Source",
 		"ParasiteEngine/Vendor",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.entty}",
 	}
 
 	links

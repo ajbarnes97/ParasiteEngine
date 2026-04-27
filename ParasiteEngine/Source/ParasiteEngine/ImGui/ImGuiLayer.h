@@ -18,10 +18,15 @@ namespace Parasite
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 
+		virtual void OnEvent(CEvent& InEvent) override;
+
 		void Begin();
 		void End();
 
+		void SetBlockEvents(bool bInBlock) { bBlockEvents = bInBlock; };
+
 	private:
+		bool bBlockEvents = true;
 		float Time = 0.0f;
 	};
 }

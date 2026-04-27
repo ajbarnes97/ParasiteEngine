@@ -23,7 +23,7 @@ namespace Parasite
 	{
 		if (InWindowSizeX == 0 || InWindowSizeY == 0)
 		{
-			PE_WARN("Attempting to resize window to an invalid size.");
+			PE_CORE_WARN("Attempting to resize window to an invalid size.");
 			return;
 		}
 

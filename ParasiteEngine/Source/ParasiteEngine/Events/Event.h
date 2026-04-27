@@ -36,6 +36,8 @@ namespace Parasite
 		friend class CEventDispatcher;
 
 	public:
+		virtual ~CEvent() = default;
+
 		virtual EEventType GetEventType() const = 0;
 		virtual const char* GetName() const = 0;
 		virtual int GetCategoryFlags() const = 0;
@@ -48,7 +50,6 @@ namespace Parasite
 
 		inline const bool IsHandled() const { return bHandled; }
 
-	protected:
 		bool bHandled = false;
 	};
 

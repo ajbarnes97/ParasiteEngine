@@ -16,6 +16,8 @@ namespace Parasite
 	class CFrameBuffer
 	{
 	public:
+		virtual ~CFrameBuffer() = default;
+
 		virtual inline const SFrameBufferSpecification& GetSpecification() const = 0;
 		virtual inline uint32_t GetColourAttachmentRendererID() const = 0;
 
