@@ -29,6 +29,13 @@ namespace Parasite
 		ActiveScene = MakeShared<CScene>();
 		SqaureEntity = ActiveScene->CreateEntity("Sqaure");
 		SqaureEntity.AddComponent<SSpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 1.0f, 1.0f });
+
+		CameraEntity = ActiveScene->CreateEntity("Camera");
+		CameraEntity.AddComponent<SCameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));
+
+		CameraTwoEntity = ActiveScene->CreateEntity("Camera Two");
+		auto& CameraComp = CameraTwoEntity.AddComponent<SCameraComponent>(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f));
+		CameraComp.bPrimaryCamera = false;
 	}
 
 	void CEditorLayer::OnDetach()
@@ -42,27 +49,27 @@ namespace Parasite
 			Camera.OnUpdate(InTimestep);
 		}
 
-		ActiveScene->OnUpdate(InTimestep);
 
 		FrameBuffer->Bind();
 
 		CRenderCommand::SetClearColour(glm::vec4(0.1f, 0.1f, 0.1f, 1));
 		CRenderCommand::Clear();
 
-		CRenderer2D::BeginScene(Camera.GetCamera());
-		for (float y = -5.0f; y < 5.0f; y += 0.5f)
-		{
-			for (float x = -5.0f; x < 5.0f; x += 0.5f)
-			{
-				glm::vec4 Colour = { (x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.5f };
-				CRenderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, Colour);
-			}
-		}
-		CRenderer2D::EndScene();
-
-		CRenderer2D::BeginScene(Camera.GetCamera());
-		CRenderer2D::DrawQuad({ 0.0f, 0.0f, 1.0f }, { 1.0f, 2.0f }, SubTexture);
-		CRenderer2D::EndScene();
+		//CRenderer2D::BeginScene(Camera.GetCamera());
+		//for (float y = -5.0f; y < 5.0f; y += 0.5f)
+		//{
+		//	for (float x = -5.0f; x < 5.0f; x += 0.5f)
+		//	{
+		//		glm::vec4 Colour = { (x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.5f };
+		//		CRenderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, Colour);
+		//	}
+		//}
+		//CRenderer2D::EndScene();
+		//
+		//CRenderer2D::BeginScene(Camera.GetCamera());
+		//CRenderer2D::DrawQuad({ 0.0f, 0.0f, 1.0f }, { 1.0f, 2.0f }, SubTexture);
+		//CRenderer2D::EndScene();
+		ActiveScene->OnUpdate(InTimestep);
 
 		FrameBuffer->Unbind();
 	}
@@ -105,6 +112,14 @@ namespace Parasite
 		}
 		ImGui::End();
 
+		ImGui::Begin("Camera Settings");
+		ImGui::DragFloat3("Camera", glm::value_ptr(CameraEntity.GetComponent<STransformComponent>().Transform[3]));
+		if (ImGui::Checkbox("Camera A", &bPrimaryCamera))
+		{
+			CameraEntity.GetComponent<SCameraComponent>().bPrimaryCamera = bPrimaryCamera;
+			CameraTwoEntity.GetComponent<SCameraComponent>().bPrimaryCamera = !bPrimaryCamera;
+		}
+		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::Begin("Viewport");

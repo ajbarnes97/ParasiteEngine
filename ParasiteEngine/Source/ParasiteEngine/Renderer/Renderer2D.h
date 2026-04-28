@@ -12,6 +12,7 @@ namespace Parasite
 		static void Init();
 		static void Shutdown();
 		
+		static void BeginScene(const CCamera& InCamera, const glm::mat4& InTransform);
 		static void BeginScene(const CCamera& InCamera);
 		static void EndScene();
 		static void Flush();

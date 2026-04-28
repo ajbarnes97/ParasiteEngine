@@ -1,5 +1,7 @@
 #pragma once
 #include "glm/ext/matrix_float4x4.hpp"
+#include "ParasiteEngine/Renderer/Camera.h"
+
 
 namespace Parasite
 {
@@ -43,5 +45,18 @@ namespace Parasite
 
 	public:
 		glm::vec4 Colour;
+	};
+
+	struct SCameraComponent
+	{
+	public:
+		SCameraComponent() = default;
+		SCameraComponent(const SCameraComponent&) = default;
+		SCameraComponent(const glm::mat4& InProjection)
+			: Camera(InProjection) {
+		}
+
+		CCamera Camera; 
+		bool bPrimaryCamera = true; // todo: Should be handled by scene
 	};
 }

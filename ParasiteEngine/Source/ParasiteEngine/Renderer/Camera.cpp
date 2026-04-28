@@ -7,10 +7,9 @@
 namespace Parasite
 {
 	COrthographicCamera::COrthographicCamera(float InLeft, float InRight, float InBottom, float InTop)
-		: ProjectionMatrix(glm::ortho(InLeft, InRight, InBottom, InTop, -1.0f, 1.0f)),
-			ViewMatrix(1.0f)
 	{
-		ViewProjectionMatrix = ProjectionMatrix * ViewMatrix;
+		SetProjection(InLeft, InRight, InBottom, InTop);
+		RecalculateViewMatrix();
 	}
 
 	void COrthographicCamera::SetProjection(float InLeft, float InRight, float InBottom, float InTop)

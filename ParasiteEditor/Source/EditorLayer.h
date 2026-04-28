@@ -34,7 +34,9 @@ namespace Parasite
 
 		TSharedPtr<CScene> ActiveScene;
 		CEntity SqaureEntity;
+		CEntity CameraEntity, CameraTwoEntity;
 
+		bool bPrimaryCamera = true;
 		bool bViewportFocused = false, bViewportHovered = false;
 		glm::vec2 ViewportSize = { 0.0f, 0.0f };
 
