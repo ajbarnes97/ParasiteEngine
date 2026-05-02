@@ -65,27 +65,24 @@ namespace Parasite
 	struct SNativeScriptComponent
 	{
 	public:
+		virtual ~SNativeScriptComponent() {}
+
 		template<typename T>
 		void Bind();
 
 	public:
+		CScriptableEntity* (*InstantiateScript)();
+		void (*DestroyScript)(SNativeScriptComponent*);
+
 		CScriptableEntity* Instance = nullptr;
 		std::function<void()> InstantiateFunc;
 		std::function<void()> DestroyInstanceFunc;
-
-		std::function<void(CScriptableEntity*)> OnCreateFunc;
-		std::function<void(CScriptableEntity*)> OnDestroyFunc;
-		std::function<void(CScriptableEntity*, CTimestep)> OnUpdateFunc;
 	};
 
 	template<typename T>
 	void SNativeScriptComponent::Bind()
 	{
-		InstantiateFunc = [&]() { Instance = new T(); };
-		DestroyInstanceFunc = [&]() { delete static_cast<T*>(Instance); };
-
-		OnCreateFunc = [](CScriptableEntity* InInstance) { static_cast<T*>(InInstance)->OnCreate(); };
-		OnDestroyFunc = [](CScriptableEntity* InInstance) { static_cast<T*>(InInstance)->OnDestroy(); };
-		OnUpdateFunc = [](CScriptableEntity* InInstance, CTimestep InTimestep) { static_cast<T*>(InInstance)->OnUpdate(InTimestep); };
+		InstantiateScript = []() { return static_cast<CScriptableEntity*>(new T()); };
+		DestroyScript = [](SNativeScriptComponent* InScriptComponent) { delete InScriptComponent->Instance; };
 	}
 }

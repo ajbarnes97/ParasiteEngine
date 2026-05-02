@@ -5,7 +5,6 @@
 #include "Component.h"
 #include "ParasiteEngine/Renderer/Renderer2D.h"
 
-
 #include "../entt/entt.hpp"
 
 
@@ -39,12 +38,12 @@ namespace Parasite
 				// todo: this will need to be moved to runtime start when setup
 				if (!InScriptComponent.Instance)
 				{
-					InScriptComponent.InstantiateFunc();
+					InScriptComponent.Instance = InScriptComponent.InstantiateScript();
 					InScriptComponent.Instance->Entity = CEntity(InEntity, this);
-					InScriptComponent.OnCreateFunc(InScriptComponent.Instance);
+					InScriptComponent.Instance->OnCreate();
 				}
 
-				InScriptComponent.OnUpdateFunc(InScriptComponent.Instance, InTimestep);
+				InScriptComponent.Instance->OnUpdate(InTimestep);
 			});
 		}
 
@@ -54,8 +53,8 @@ namespace Parasite
 			auto Group = Registry.view<SCameraComponent, STransformComponent>();
 			for (auto Entity : Group)
 			{
-				auto& Transform = Group.get<STransformComponent>(Entity);
-				auto& Camera = Group.get<SCameraComponent>(Entity);
+				auto Transform = Group.get<STransformComponent>(Entity);
+				auto Camera = Group.get<SCameraComponent>(Entity);
 				if (Camera.bPrimaryCamera)
 				{
 					PrimaryCamera = &Camera.Camera;
@@ -72,8 +71,8 @@ namespace Parasite
 			auto Group = Registry.group<STransformComponent, SSpriteRendererComponent>();
 			for (auto Entity : Group)
 			{
-				auto& Transform = Group.get<STransformComponent>(Entity);
-				auto& Sprite = Group.get<SSpriteRendererComponent>(Entity);
+				auto Transform = Group.get<STransformComponent>(Entity);
+				auto Sprite = Group.get<SSpriteRendererComponent>(Entity);
 
 				CRenderer2D::DrawQuad(Transform, Sprite.Colour);
 			}

@@ -4,6 +4,7 @@
 #include "ParasiteEngine/Core/Timestep.h"
 #include "ParasiteEngine/Events/Event.h"
 #include "ParasiteEngine/Renderer/CameraController.h"
+#include "Panels/SceneHierarchyPanel.h"
 
 
 namespace Parasite
@@ -41,5 +42,7 @@ namespace Parasite
 		glm::vec2 ViewportSize = { 0.0f, 0.0f };
 
 		glm::vec4 SqaureColour = { 0.2f, 0.3f, 0.8f, 1.0f };
+
+		CSceneHierarchyPanel HierarchyPanel;
 	};
 }

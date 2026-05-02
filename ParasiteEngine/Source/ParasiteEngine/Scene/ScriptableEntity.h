@@ -10,6 +10,11 @@ namespace Parasite
 		template<typename T>
 		T& GetComponent();
 
+	protected:
+		virtual void OnCreate() {};
+		virtual void OnUpdate(CTimestep InTimestep) {};
+		virtual void OnDestroy() {};
+
 	private:
 		CEntity Entity;
 		friend class CScene;

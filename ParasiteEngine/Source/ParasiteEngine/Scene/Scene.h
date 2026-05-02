@@ -22,5 +22,6 @@ namespace Parasite
 		entt::registry Registry;
 		
 		friend class CEntity;
+		friend class CSceneHierarchyPanel;
 	};
 }

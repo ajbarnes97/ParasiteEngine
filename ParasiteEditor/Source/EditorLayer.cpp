@@ -67,6 +67,9 @@ namespace Parasite
 
 	
 		CameraTwoEntity.AddComponent<SNativeScriptComponent>().Bind<CCameraController>();
+		CameraEntity.AddComponent<SNativeScriptComponent>().Bind<CCameraController>();
+
+		HierarchyPanel.SetContext(ActiveScene);
 	}
 
 	void CEditorLayer::OnDetach()
@@ -142,6 +145,8 @@ namespace Parasite
 			ImGui::EndMenuBar();
 		}
 		ImGui::End();
+
+		HierarchyPanel.OnImGuiRender();
 
 		ImGui::Begin("Camera Settings");
 		ImGui::DragFloat3("Camera", glm::value_ptr(CameraEntity.GetComponent<STransformComponent>().Transform[3]));
