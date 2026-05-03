@@ -16,6 +16,7 @@ namespace Parasite
 
 	private:
 		void DrawEntityNode(CEntity InEntity);
+		void DrawComponents(CEntity InEntity);
 
 	private:
 		TSharedPtr<CScene> Context;

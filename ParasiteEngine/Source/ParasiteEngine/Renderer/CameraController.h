@@ -19,8 +19,8 @@ namespace Parasite
 
 		void ResizeBounds(float InWidth, float InHeight);
 
-		inline const COrthographicCamera& GetCamera() const { return Camera; };
-		inline COrthographicCamera& GetCamera() { return Camera; };
+		inline const CCamera& GetCamera() const { return Camera; };
+		inline CCamera& GetCamera() { return Camera; };
 
 	private:
 		bool OnMouseScrolledEvent(CMouseScrollEvent& InEvent);
@@ -40,6 +40,6 @@ namespace Parasite
 		float CameraRotation = 0.0f;
 		glm::vec3 CameraPosition = { 0.0f, 0.0f, 0.0f };
 
-		COrthographicCamera Camera;
+		CCamera Camera;
 	};
 }

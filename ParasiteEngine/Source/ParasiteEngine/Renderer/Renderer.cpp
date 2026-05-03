@@ -21,9 +21,9 @@ namespace Parasite
 		CRenderCommand::SetViewport(0, 0, InWidth, InHeight);
 	}
 
-	void CRenderer::BeginScene(CCamera& InCamera)
+	void CRenderer::BeginScene(CCamera& InCamera, const glm::mat4& InTransform)
 	{
-		SceneData->ViewProjectionMatrix = InCamera.GetViewProjectionMatrix();
+		SceneData->ViewProjectionMatrix = InCamera.GetProjectionMatrix() * glm::inverse(InTransform);
 	}
 
 	void CRenderer::EndScene()

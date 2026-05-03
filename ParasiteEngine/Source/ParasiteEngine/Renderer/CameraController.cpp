@@ -9,8 +9,7 @@
 namespace Parasite
 {
 	COrthographicCameraController::COrthographicCameraController(float InAspectRatio, bool bInEnableRotation)
-		: Camera(-AspectRatio * ZoomLevel, AspectRatio * ZoomLevel, -ZoomLevel, ZoomLevel),
-			AspectRatio(InAspectRatio), bRotationEnabled(bInEnableRotation)
+		: (InAspectRatio), bRotationEnabled(bInEnableRotation)
 	{
 	}
 
@@ -45,9 +44,6 @@ namespace Parasite
 			}
 		}
 
-		Camera.SetPosition(CameraPosition);
-		Camera.SetRotation(CameraRotation);
-
 		CameraTranslationSpeed = ZoomLevel;
 	}
 
@@ -61,14 +57,14 @@ namespace Parasite
 	void COrthographicCameraController::ResizeBounds(float InWidth, float InHeight)
 	{
 		AspectRatio = InWidth / InHeight;
-		Camera.SetProjection(-AspectRatio * ZoomLevel, AspectRatio * ZoomLevel, -ZoomLevel, ZoomLevel);
+		Camera.SetOrthographic(-AspectRatio * ZoomLevel, AspectRatio * ZoomLevel, -ZoomLevel);
 	}
 
 	bool COrthographicCameraController::OnMouseScrolledEvent(CMouseScrollEvent& InEvent)
 	{
 		ZoomLevel -= InEvent.GetYOffset();
 		ZoomLevel = std::max(ZoomLevel, 0.25f);
-		Camera.SetProjection(-AspectRatio * ZoomLevel, AspectRatio * ZoomLevel, -ZoomLevel, ZoomLevel);
+		Camera.SetOrthographic(-AspectRatio * ZoomLevel, AspectRatio * ZoomLevel, -ZoomLevel);
 		return false;
 	}
 

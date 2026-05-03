@@ -31,10 +31,10 @@ namespace Parasite
 		SqaureEntity.AddComponent<SSpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 1.0f, 1.0f });
 
 		CameraEntity = ActiveScene->CreateEntity("Camera");
-		CameraEntity.AddComponent<SCameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));
+		CameraEntity.AddComponent<SCameraComponent>();
 
 		CameraTwoEntity = ActiveScene->CreateEntity("Camera Two");
-		auto& CameraComp = CameraTwoEntity.AddComponent<SCameraComponent>(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f));
+		auto& CameraComp = CameraTwoEntity.AddComponent<SCameraComponent>();
 		CameraComp.bPrimaryCamera = false;
 
 		class CCameraController : public CScriptableEntity

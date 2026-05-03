@@ -13,7 +13,7 @@ namespace Parasite
 		static void Init();
 		static void OnWindowResize(uint32_t InWidth, uint32_t InHeight);
 
-		static void BeginScene(CCamera& InCamera);
+		static void BeginScene(CCamera& InCamera, const glm::mat4& InTransform);
 		static void EndScene();
 
 		static void Submit(const TSharedPtr<CShader> InShader, const TSharedPtr<CVertexArray>& InVertexArray, const glm::mat4& InTransform = glm::mat4(1.0f));

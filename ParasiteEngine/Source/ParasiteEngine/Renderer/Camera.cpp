@@ -6,65 +6,88 @@
 
 namespace Parasite
 {
-	COrthographicCamera::COrthographicCamera(float InLeft, float InRight, float InBottom, float InTop)
+
+	void CCamera::SetOrthographic(float InSize, float InNearClip, float InFarClip)
 	{
-		SetProjection(InLeft, InRight, InBottom, InTop);
-		RecalculateViewMatrix();
+		ProjectionType = EProjectionType::Orthographic;
+		OrthographicSize = InSize;
+		OrthographicNearClip = InNearClip;
+		OrthographicFarClip = InFarClip;
+		RecalculateProjection();
 	}
 
-	void COrthographicCamera::SetProjection(float InLeft, float InRight, float InBottom, float InTop)
+	void CCamera::SetPerspective(float InFieldOfView, float InNearClip, float InFarClip)
 	{
-		ProjectionMatrix = glm::ortho(InLeft, InRight, InBottom, InTop);
-		ViewProjectionMatrix = ProjectionMatrix * ViewMatrix;
+		ProjectionType = EProjectionType::Perspective;
+		PerspectiveFOV = InFieldOfView;
+		PerspectiveNearClip = InNearClip;
+		PerspectiveFarClip = InFarClip;
+		RecalculateProjection();
 	}
 
-	void COrthographicCamera::SetPosition(const glm::vec3& InPosition)
+	void CCamera::SetViewportSize(float InWidth, float InHeight)
 	{
-		Position = InPosition;
-		RecalculateViewMatrix();
+		AspectRatio = InWidth / InHeight;
+		RecalculateProjection();
 	}
 
-	void COrthographicCamera::SetRotation(float InRotation)
+	void CCamera::SetProjectionType(EProjectionType InType)
 	{
-		Rotation = InRotation;
-		RecalculateViewMatrix();
+		ProjectionType = InType;
+		RecalculateProjection();
 	}
 
-	void COrthographicCamera::RecalculateViewMatrix()
+	void CCamera::SetPerspectiveFOV(float InFieldOfView)
 	{
-		const glm::vec3 AxisZ = glm::vec3(0, 0, 1);
-		
-		glm::mat4 Transform = 
-			glm::translate(glm::mat4(1.0f), Position) *
-			glm::rotate(glm::mat4(1.0f), glm::radians(Rotation), AxisZ);
-
-		ViewMatrix = glm::inverse(Transform);
-		ViewProjectionMatrix = ProjectionMatrix * ViewMatrix;
+		PerspectiveFOV = InFieldOfView; 
+		RecalculateProjection();
 	}
 
-
-	CPerspectiveCamera::CPerspectiveCamera(float InFov, float InAspectRatio, float InNearClip, float InFarClip)
+	void CCamera::SetPerspectiveNearClip(float InNearClip)
 	{
-		ProjectionMatrix = glm::perspective(glm::radians(InFov), InAspectRatio, InNearClip, InFarClip);
-
-		ViewMatrix = glm::mat4(1.0f);
-		RecalculateViewProjection();
+		PerspectiveNearClip = InNearClip;
+		RecalculateProjection();
 	}
 
-	void CPerspectiveCamera::SetProjection(float InFov, float InAspectRatio, float InNearClip, float InFarClip)
+	void CCamera::SetPerspectiveFarClip(float InFarClip)
 	{
-		ProjectionMatrix = glm::perspective(glm::radians(InFov), InAspectRatio, InNearClip, InFarClip);
-		RecalculateViewProjection();
+		PerspectiveFarClip = InFarClip;
+		RecalculateProjection();
 	}
 
-	void CPerspectiveCamera::SetView(const glm::mat4& InView)
+	void CCamera::SetOrthographicSize(float InSize)
 	{
-		ViewMatrix = InView;
-		RecalculateViewProjection();
+		OrthographicSize = InSize; 
+		RecalculateProjection();
 	}
 
-	void CPerspectiveCamera::RecalculateViewProjection()
+	void CCamera::SetOrthographicNearClip(float InNearClip)
 	{
-		ViewProjectionMatrix = ProjectionMatrix * ViewMatrix;
+		OrthographicNearClip = InNearClip;
+		RecalculateProjection();
+	}
+
+	void CCamera::SetOrthographicFarClip(float InFarClip)
+	{
+		OrthographicFarClip = InFarClip;
+		RecalculateProjection();
+	}
+
+	void CCamera::RecalculateProjection()
+	{
+		if (ProjectionType == EProjectionType::Perspective)
+		{
+			ProjectionMatrix = glm::perspective(glm::radians(PerspectiveFOV), AspectRatio,
+				PerspectiveNearClip, PerspectiveFarClip);
+		}
+		else
+		{
+			const float left = -OrthographicSize * AspectRatio * 0.5f;
+			const float right = OrthographicSize * AspectRatio * 0.5f;
+			const float bottom = -OrthographicSize * 0.5f;
+			const float top = OrthographicSize * 0.5f;
+
+			ProjectionMatrix = glm::ortho(left, right, bottom, top, OrthographicNearClip, OrthographicFarClip);
+		}
 	}
 }
