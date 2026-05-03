@@ -3,6 +3,7 @@
 #include "ParasiteEngine/Scene/ScriptableEntity.h"
 
 #include "glm/ext/matrix_float4x4.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 
 namespace Parasite
@@ -25,14 +26,23 @@ namespace Parasite
 	public:
 		STransformComponent() = default;
 		STransformComponent(const STransformComponent&) = default;
-		STransformComponent(const glm::mat4& InTransform)
-			: Transform(InTransform) {}
+		STransformComponent(glm::vec3 InTranslation)
+			: Translation(InTranslation) {}
 
-		operator glm::mat4& () { return Transform; }
-		operator const glm::mat4& () const { return Transform; }
+		glm::mat4 GetTransform() const
+		{
+			glm::mat4 RotationMat = glm::rotate(glm::mat4(1.0f), Rotation.x, { 1, 0, 0 })
+				* glm::rotate(glm::mat4(1.0f), Rotation.y, { 0, 1, 0 })
+				* glm::rotate(glm::mat4(1.0f), Rotation.z, { 0, 0, 1 });
+
+			return glm::translate(glm::mat4(1.0f), Translation)
+				* RotationMat * glm::scale(glm::mat4(1.0f), Scale);
+		}
 
 	public:
-		glm::mat4 Transform = glm::mat4(1.0f);
+		glm::vec3 Translation = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 Rotation = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 Scale = { 1.0f, 1.0f, 1.0f };
 	};
 
 	

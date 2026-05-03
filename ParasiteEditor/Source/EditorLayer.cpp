@@ -30,6 +30,9 @@ namespace Parasite
 		SqaureEntity = ActiveScene->CreateEntity("Sqaure");
 		SqaureEntity.AddComponent<SSpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 1.0f, 1.0f });
 
+		SqaureEntity2 = ActiveScene->CreateEntity("Sqaure2");
+		SqaureEntity2.AddComponent<SSpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 1.0f, 1.0f });
+
 		CameraEntity = ActiveScene->CreateEntity("Camera");
 		CameraEntity.AddComponent<SCameraComponent>();
 
@@ -46,17 +49,17 @@ namespace Parasite
 
 			void OnUpdate(CTimestep InTimestep)
 			{
-				auto& Transform = GetComponent<STransformComponent>().Transform;
+				auto& Translation = GetComponent<STransformComponent>().Translation;
 				float Speed = 5.0f;
 
 				if (CInput::IsKeyPressed(PE_KEY_A))
-					Transform[3][0] -= Speed * InTimestep;
+					Translation.x -= Speed * InTimestep;
 				if (CInput::IsKeyPressed(PE_KEY_D))
-					Transform[3][0] += Speed * InTimestep;
+					Translation.x += Speed * InTimestep;
 				if (CInput::IsKeyPressed(PE_KEY_W))
-					Transform[3][1] += Speed * InTimestep;
+					Translation.y += Speed * InTimestep;
 				if (CInput::IsKeyPressed(PE_KEY_S))
-					Transform[3][1] -= Speed * InTimestep;
+					Translation.y -= Speed * InTimestep;
 			}
 
 			void OnDestroy()
@@ -149,7 +152,6 @@ namespace Parasite
 		HierarchyPanel.OnImGuiRender();
 
 		ImGui::Begin("Camera Settings");
-		ImGui::DragFloat3("Camera", glm::value_ptr(CameraEntity.GetComponent<STransformComponent>().Transform[3]));
 		if (ImGui::Checkbox("Camera A", &bPrimaryCamera))
 		{
 			CameraEntity.GetComponent<SCameraComponent>().bPrimaryCamera = bPrimaryCamera;
@@ -175,11 +177,6 @@ namespace Parasite
 		ImGui::Image((void*)(uintptr_t)FrameBuffer->GetColourAttachmentRendererID(), { ViewportSize.x, ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::End();
 		ImGui::PopStyleVar();
-
-
-		ImGui::Begin("Settings");
-		ImGui::ColorEdit4("Square Colour:", glm::value_ptr(SqaureColour));
-		ImGui::End();
 	}
 
 	void CEditorLayer::OnEvent(CEvent& InEvent)

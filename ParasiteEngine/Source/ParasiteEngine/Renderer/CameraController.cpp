@@ -9,7 +9,7 @@
 namespace Parasite
 {
 	COrthographicCameraController::COrthographicCameraController(float InAspectRatio, bool bInEnableRotation)
-		: (InAspectRatio), bRotationEnabled(bInEnableRotation)
+		: AspectRatio(InAspectRatio), bRotationEnabled(bInEnableRotation)
 	{
 	}
 

@@ -48,7 +48,7 @@ namespace Parasite
 		}
 
 		CCamera* PrimaryCamera = nullptr;
-		glm::mat4* CameraTransform = nullptr;
+		glm::mat4 CameraTransform;
 		{
 			auto Group = Registry.view<SCameraComponent, STransformComponent>();
 			for (auto Entity : Group)
@@ -58,7 +58,7 @@ namespace Parasite
 				if (Camera.bPrimaryCamera)
 				{
 					PrimaryCamera = &Camera.Camera;
-					CameraTransform = &Transform.Transform;
+					CameraTransform = Transform.GetTransform();
 					break;
 				}
 			}
@@ -66,7 +66,7 @@ namespace Parasite
 
 		if (PrimaryCamera)
 		{
-			CRenderer2D::BeginScene(*PrimaryCamera, *CameraTransform);
+			CRenderer2D::BeginScene(*PrimaryCamera, CameraTransform);
 
 			auto Group = Registry.group<STransformComponent, SSpriteRendererComponent>();
 			for (auto Entity : Group)
@@ -74,7 +74,7 @@ namespace Parasite
 				auto Transform = Group.get<STransformComponent>(Entity);
 				auto Sprite = Group.get<SSpriteRendererComponent>(Entity);
 
-				CRenderer2D::DrawQuad(Transform, Sprite.Colour);
+				CRenderer2D::DrawQuad(Transform.GetTransform(), Sprite.Colour);
 			}
 
 			CRenderer2D::EndScene();

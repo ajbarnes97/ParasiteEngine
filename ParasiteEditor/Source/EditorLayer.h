@@ -34,7 +34,7 @@ namespace Parasite
 		TSharedPtr<CFrameBuffer> FrameBuffer;
 
 		TSharedPtr<CScene> ActiveScene;
-		CEntity SqaureEntity;
+		CEntity SqaureEntity, SqaureEntity2;
 		CEntity CameraEntity, CameraTwoEntity;
 
 		bool bPrimaryCamera = true;
