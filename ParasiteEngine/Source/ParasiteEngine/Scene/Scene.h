@@ -15,6 +15,7 @@ namespace Parasite
 		~CScene();
 
 		CEntity CreateEntity(const std::string& InName = std::string());
+		void DestroyEntity(CEntity InEntity);
 
 		void OnUpdate(CTimestep InTimestep);
 

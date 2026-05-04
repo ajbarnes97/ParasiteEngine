@@ -35,12 +35,44 @@ namespace Parasite
 			SelectionContext = {};
 		}
 
+		if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
+		{
+			if (ImGui::MenuItem("Create Empty Entity"))
+			{
+				Context->CreateEntity("Empty Entity");
+			}
+
+			ImGui::EndPopup();
+		}
+
 		ImGui::End();
 
 		ImGui::Begin("Details");
 		if (SelectionContext)
 		{
 			DrawComponents(SelectionContext);
+
+			if (ImGui::Button("Add Component"))
+			{
+				ImGui::OpenPopup("AddComponent");
+			}
+
+			if (ImGui::BeginPopup("AddComponent"))
+			{
+				if (!SelectionContext.HasComponent<SCameraComponent>() && ImGui::MenuItem("Camera"))
+				{
+					SelectionContext.AddComponent<SCameraComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+
+				if (!SelectionContext.HasComponent<SSpriteRendererComponent>() && ImGui::MenuItem("Sprite Renderer"))
+				{
+					SelectionContext.AddComponent<SSpriteRendererComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::EndPopup();
+			}
 		}
 		ImGui::End();
 	}
@@ -56,9 +88,29 @@ namespace Parasite
 			SelectionContext = InEntity;
 		}
 
+		bool bEntityDeleted = false;
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (ImGui::MenuItem("Delete Entity"))
+			{
+				bEntityDeleted = true;
+				if (InEntity == SelectionContext)
+				{
+					SelectionContext = CEntity::NullEntity();
+				}
+			}
+
+			ImGui::EndPopup();
+		}
+
 		if (bOpened)
 		{
 			ImGui::TreePop();
+		}
+
+		if (bEntityDeleted)
+		{
+			Context->DestroyEntity(InEntity);
 		}
 	}
 
@@ -157,10 +209,32 @@ namespace Parasite
 			}
 		}
 
+		const ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowOverlap;
+
 		if (InEntity.HasComponent<SCameraComponent>())
 		{
 			void* ID = reinterpret_cast<void*>(typeid(SCameraComponent).hash_code());
-			if (ImGui::TreeNodeEx(ID, ImGuiTreeNodeFlags_DefaultOpen, "Camera"))
+
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4, 4));
+			const bool bOpened = ImGui::TreeNodeEx(ID, TreeNodeFlags, "Camera");
+			ImGui::SameLine(ImGui::GetWindowWidth() - 25.0f);
+			if (ImGui::Button("..."))
+			{
+				ImGui::OpenPopup("ComponentSettings");
+			}
+			ImGui::PopStyleVar();
+
+			bool bRemoveComponent = false;
+			if (ImGui::BeginPopup("ComponentSettings"))
+			{
+				if (ImGui::MenuItem("Remove Component"))
+				{
+					bRemoveComponent = true;
+				}
+				ImGui::EndPopup();
+			}
+
+			if (bOpened)
 			{
 				auto& CameraComponent = InEntity.GetComponent<SCameraComponent>();
 				auto& Camera = CameraComponent.Camera;
@@ -231,12 +305,17 @@ namespace Parasite
 
 				ImGui::TreePop();
 			}
+		
+			if (bRemoveComponent)
+			{
+				InEntity.RemoveComponent<SCameraComponent>();
+			}
 		}
 	
 		if (InEntity.HasComponent<SSpriteRendererComponent>())
 		{
 			void* ID = reinterpret_cast<void*>(typeid(SSpriteRendererComponent).hash_code());
-			if (ImGui::TreeNodeEx(ID, ImGuiTreeNodeFlags_DefaultOpen, "Sprite Renderer"))
+			if (ImGui::TreeNodeEx(ID, TreeNodeFlags, "Sprite Renderer"))
 			{
 				auto& RendererComponent = InEntity.GetComponent<SSpriteRendererComponent>();
 				ImGui::ColorEdit4("Colour", glm::value_ptr(RendererComponent.Colour));

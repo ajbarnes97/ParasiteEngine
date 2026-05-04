@@ -29,6 +29,11 @@ namespace Parasite
 		return NewEntity;
 	}
 
+	void CScene::DestroyEntity(CEntity InEntity)
+	{
+		Registry.destroy(InEntity);
+	}
+
 	void CScene::OnUpdate(CTimestep InTimestep)
 	{
 		// Update scripts
