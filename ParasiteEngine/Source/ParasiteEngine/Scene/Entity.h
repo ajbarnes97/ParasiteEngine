@@ -15,6 +15,7 @@ namespace Parasite
 		CEntity(const CEntity&) = default;
 
 		operator const bool() const { return EntityHandle != entt::null; }
+		operator const entt::entity() const { return EntityHandle; }
 		operator const uint32_t () const { return static_cast<uint32_t>(EntityHandle); }
 		explicit operator const uint64_t() const { return static_cast<uint64_t>(EntityHandle); }
 		bool operator ==(const CEntity& InOther) const 
@@ -22,6 +23,8 @@ namespace Parasite
 			return EntityHandle == InOther.EntityHandle && Scene == InOther.Scene; 
 		}
 		bool operator !=(const CEntity& InOther) const { return !operator==(InOther); }
+
+		static CEntity NullEntity() { return CEntity(entt::null, nullptr); }
 
 		template<typename T>
 		bool HasComponent();
@@ -36,7 +39,7 @@ namespace Parasite
 		T& GetComponent();
 
 	private:
-		entt::entity EntityHandle = entt::null;
+		entt::entity EntityHandle = CEntity::NullEntity();
 		CScene* Scene = nullptr;
 	};
 
@@ -65,6 +68,6 @@ namespace Parasite
 	void CEntity::RemoveComponent()
 	{
 		PE_CORE_ASSERT(HasComponent<T>(), "Entity has no component of type.");
-		Scene->Registry.remove(EntityHandle);
+		Scene->Registry.remove<T>(EntityHandle);
 	}
 }
