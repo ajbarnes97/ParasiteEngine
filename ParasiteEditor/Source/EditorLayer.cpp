@@ -15,10 +15,10 @@ namespace Parasite
 
 	void CEditorLayer::OnAttach()
 	{
-		Texture = CTexture2D::Create("Assets/Textures/Checkerboard.png");
-		SpriteSheet = CTexture2D::Create("Assets/Textures/TextureSheet.png");
+		//Texture = CTexture2D::Create("Assets/Textures/Checkerboard.png");
+		//SpriteSheet = CTexture2D::Create("Assets/Textures/TextureSheet.png");
 
-		SubTexture = CSubTexture2D::CreateFromCoords(SpriteSheet, { 2, 1 }, { 128, 128 }, { 1, 2 });
+		//SubTexture = CSubTexture2D::CreateFromCoords(SpriteSheet, { 2, 1 }, { 128, 128 }, { 1, 2 });
 
 		SFrameBufferSpecification Specification;
 		Specification.Width = 1280;
@@ -132,8 +132,16 @@ namespace Parasite
 		ImGui::Begin("DockSpace", &bOpenDockspace, WindowFlags);
 		ImGui::PopStyleVar(2);
 
+		ImGuiStyle& Style = ImGui::GetStyle();
+
+		const float MinWindowSize = Style.WindowMinSize.x;
+		// Set min window size for docked windows
+		Style.WindowMinSize.x = 370.0f; 
+
 		ImGuiID DockspaceID = ImGui::GetID("MyDockSpace");
 		ImGui::DockSpace(DockspaceID, ImVec2(0.0f, 0.0f), DockspaceFlags);
+
+		Style.WindowMinSize.x = MinWindowSize;
 
 		if (ImGui::BeginMenuBar())
 		{

@@ -11,8 +11,8 @@ namespace Parasite
 	struct SWindowInfo
 	{
 		SWindowInfo(const std::string& InTitle = "Parasite Engine",
-					uint32_t InWidth = 1280,
-					uint32_t InHeight = 720)
+					uint32_t InWidth = 1600,
+					uint32_t InHeight = 900)
 			: Title(InTitle),
 				Width(InWidth),
 				Height(InHeight)
