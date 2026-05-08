@@ -5,6 +5,7 @@
 #include "ParasiteEngine/Events/Event.h"
 #include "ParasiteEngine/Renderer/CameraController.h"
 #include "Panels/SceneHierarchyPanel.h"
+#include "Panels/EditorSettings.h"
 
 
 namespace Parasite
@@ -44,5 +45,6 @@ namespace Parasite
 		glm::vec4 SqaureColour = { 0.2f, 0.3f, 0.8f, 1.0f };
 
 		CSceneHierarchyPanel HierarchyPanel;
+		CEditorSettings EditorSettings;
 	};
 }

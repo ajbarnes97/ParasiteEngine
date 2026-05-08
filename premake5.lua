@@ -19,17 +19,20 @@ IncludeDir["ImGui"] = "ParasiteEngine/Vendor/ImGui"
 IncludeDir["glm"] = "ParasiteEngine/Vendor/glm"
 IncludeDir["stb_image"] = "ParasiteEngine/Vendor/stb_image"
 IncludeDir["entty"] = "ParasiteEngine/Vendor/entty"
+IncludeDir["yaml_cpp"] = "ParasiteEngine/Vendor/yaml-cpp/include"
 
 group "Dependencies"
 	include "ParasiteEngine/Vendor/GLFW"
 	include "ParasiteEngine/Vendor/Glad"
 	include "ParasiteEngine/Vendor/ImGui"
+	include "ParasiteEngine/Vendor/yaml-cpp"
 group ""
 
 -- Add premake files
 include "ParasiteEngine/Vendor/GLFW"
 include "ParasiteEngine/Vendor/Glad"
 include "ParasiteEngine/Vendor/ImGui"
+include "ParasiteEngine/Vendor/yaml-cpp"
 
 
 project "ParasiteEngine"
@@ -60,7 +63,8 @@ project "ParasiteEngine"
 
 	defines
 	{
-		"_CRT_SECURE_NO_WARNINGS",
+	    "_CRT_SECURE_NO_WARNINGS",
+	    "YAML_CPP_STATIC_DEFINE"
 	}
 
 	includedirs
@@ -73,6 +77,7 @@ project "ParasiteEngine"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entty}",
+		"%{IncludeDir.yaml_cpp}",
 	}
 
 	links
@@ -81,6 +86,7 @@ project "ParasiteEngine"
 		"Glad",
 		"ImGui",
 		"opengl32.lib",
+		"yaml-cpp"
 	}
 
 	filter "system:windows"
@@ -139,6 +145,7 @@ project "ParasiteEditor"
 		"ParasiteEngine/Vendor",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entty}",
+		"%{IncludeDir.yaml_cpp}",
 	}
 
 	links

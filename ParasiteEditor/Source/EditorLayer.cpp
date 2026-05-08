@@ -1,6 +1,7 @@
 #include "EditorLayer.h"
 
 #include "ParasiteEngine/Platform/OpenGL/OpenGLShader.h"
+#include "ParasiteEngine/Scene/SceneSerializer.h"
 
 #include "ImGui/imgui.h"
 #include "glm/gtc/type_ptr.hpp"
@@ -27,6 +28,8 @@ namespace Parasite
 		FrameBuffer = CFrameBuffer::Create(Specification);
 
 		ActiveScene = MakeShared<CScene>();
+
+#if 0
 		SqaureEntity = ActiveScene->CreateEntity("Sqaure");
 		SqaureEntity.AddComponent<SSpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 1.0f, 1.0f });
 
@@ -72,7 +75,11 @@ namespace Parasite
 		CameraTwoEntity.AddComponent<SNativeScriptComponent>().Bind<CCameraController>();
 		CameraEntity.AddComponent<SNativeScriptComponent>().Bind<CCameraController>();
 
+#endif
 		HierarchyPanel.SetContext(ActiveScene);
+
+		CSceneSerializer SceneSerializer(ActiveScene);
+		SceneSerializer.Deserialize("Assets/Scenes/Example.pescene");
 	}
 
 	void CEditorLayer::OnDetach()
@@ -113,6 +120,8 @@ namespace Parasite
 
 	void CEditorLayer::OnImGuiRender()
 	{
+		EditorSettings.OnImGuiRender();
+
 		static bool bOpenDockspace = true;
 
 		ImGuiDockNodeFlags DockspaceFlags = ImGuiDockNodeFlags_None;
@@ -143,7 +152,7 @@ namespace Parasite
 
 		Style.WindowMinSize.x = MinWindowSize;
 
-		if (ImGui::BeginMenuBar())
+		if (ImGui::BeginMainMenuBar())
 		{
 			if (ImGui::BeginMenu("File"))
 			{
@@ -151,9 +160,33 @@ namespace Parasite
 				{
 					CApplication::Get().Close();
 				}
+
+
+				if (ImGui::MenuItem("Serialize"))
+				{
+					CSceneSerializer SceneSerializer(ActiveScene);
+					SceneSerializer.Serialize("Assets/Scenes/Example.pescene");
+				}
+				if (ImGui::MenuItem("Deserialize"))
+				{
+					CSceneSerializer SceneSerializer(ActiveScene);
+					SceneSerializer.Deserialize("Assets/Scenes/Example.pescene");
+				}
+
+
 				ImGui::EndMenu();
 			}
-			ImGui::EndMenuBar();
+
+			if (ImGui::BeginMenu("Edit")) 
+			{
+				if (ImGui::MenuItem("Editor Settings"))
+				{
+					EditorSettings.ShowWindow();
+				}
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMainMenuBar();
 		}
 		ImGui::End();
 
