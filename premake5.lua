@@ -27,7 +27,7 @@ group "Dependencies"
 	include "ParasiteEngine/Vendor/GLFW"
 	include "ParasiteEngine/Vendor/Glad"
 	include "ParasiteEngine/Vendor/ImGui"
-	include "ParasiteEngine/Vendor/yaml-cpp"
+	include "ParasiteEngine/Vendor/Premakes/yaml-cpp"
 group ""
 
 project "ParasiteEngine"

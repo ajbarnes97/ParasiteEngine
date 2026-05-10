@@ -1,0 +1,37 @@
+Scene: Name
+Entities:
+  - Entity: 12837
+    TagComponent:
+      Tag: Sqaure
+    TransformComponent:
+      Translation: [-0.5735995, -1.2953379e-07, 0.082656555]
+      Rotation: [-1.2772307, 1.0939562, -1.1722945]
+      Scale: [0.6911905, 1, 87.70002]
+    SpriteRendererComponent:
+      Colour: [0.25882357, 0.43335077, 0.25882357, 0.38039216]
+  - Entity: 12837
+    TagComponent:
+      Tag: Sqaure2
+    TransformComponent:
+      Translation: [0, 0, -2.1]
+      Rotation: [0, -0.47996554, 0]
+      Scale: [1, 1, 17.3]
+    SpriteRendererComponent:
+      Colour: [0, 1, 0, 0.7921569]
+  - Entity: 12837
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, 1.5]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 74
+        PerspectiveNearClip: 0.1
+        PerspectiveFarClip: 1000
+        OrthographicSize: 10
+        OrthographicNearClip: -1
+        OrthographicFarClip: 1
+      Primary: true
