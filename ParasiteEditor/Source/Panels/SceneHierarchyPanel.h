@@ -14,6 +14,8 @@ namespace Parasite
 
 		void OnImGuiRender();
 
+		inline CEntity GetSelectionContext() const { return SelectionContext; }
+
 	private:
 		void DrawEntityNode(CEntity InEntity);
 		void DrawComponents(CEntity InEntity);

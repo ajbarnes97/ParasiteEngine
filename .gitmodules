@@ -4,3 +4,6 @@
 [submodule "ParasiteEngine/Vendor/yaml-cpp"]
 	path = ParasiteEngine/Vendor/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp
+[submodule "ParasiteEngine/Vendor/ImGuizmo"]
+	path = ParasiteEngine/Vendor/ImGuizmo
+	url = https://github.com/cedricguillemet/imguizmo

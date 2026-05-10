@@ -85,4 +85,18 @@ namespace Parasite
 			CRenderer2D::EndScene();
 		}
 	}
+
+	CEntity CScene::GetPrimaryCameraEntity()
+	{
+		auto View = Registry.view<SCameraComponent>();
+		for (auto Entity : View)
+		{
+			auto CameraComponent = View.get<SCameraComponent>(Entity);
+			if (CameraComponent.bPrimaryCamera)
+			{
+				return CEntity(Entity, this);
+			}
+		}
+		return CEntity::NullEntity();
+	}
 }

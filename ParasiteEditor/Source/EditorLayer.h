@@ -24,6 +24,8 @@ namespace Parasite
 		virtual void OnEvent(CEvent& InEvent) override;
 
 	private:
+		void DrawGizmos();
+
 		bool OnKeyPressed(CPressedKeyEvent& InEvent);
 
 		void NewScene();
@@ -33,26 +35,16 @@ namespace Parasite
 
 	private:
 		COrthographicCameraController Camera;
-
-		TSharedPtr<CVertexArray> VertexArray;
-		TSharedPtr<CShader> FlatColourShader;
-
-		TSharedPtr<CTexture2D> Texture;
-		TSharedPtr<CTexture2D> SpriteSheet;
-		TSharedPtr<CSubTexture2D> SubTexture;
 		TSharedPtr<CFrameBuffer> FrameBuffer;
 
 		TSharedPtr<CScene> ActiveScene;
 		std::string ActiveSceneFilePath;
 
-		CEntity SqaureEntity, SqaureEntity2;
-		CEntity CameraEntity, CameraTwoEntity;
-
 		bool bPrimaryCamera = true;
 		bool bViewportFocused = false, bViewportHovered = false;
 		glm::vec2 ViewportSize = { 0.0f, 0.0f };
 
-		glm::vec4 SqaureColour = { 0.2f, 0.3f, 0.8f, 1.0f };
+		int GizmoType = INDEX_NONE;
 
 		CSceneHierarchyPanel HierarchyPanel;
 		CEditorSettings EditorSettings;

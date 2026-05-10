@@ -19,6 +19,8 @@ namespace Parasite
 
 		void OnUpdate(CTimestep InTimestep);
 
+		CEntity GetPrimaryCameraEntity();
+
 	private:
 		entt::registry Registry;
 		

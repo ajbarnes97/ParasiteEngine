@@ -14,6 +14,7 @@
 #include "unordered_set"
 
 #include "ParasiteEngine/Core/Log.h"
+#include "ParasiteEngine/Math/Math.h"
 
 
 #ifdef PE_PLATFORM_WINDOWS

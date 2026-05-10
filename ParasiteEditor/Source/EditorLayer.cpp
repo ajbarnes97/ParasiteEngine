@@ -3,7 +3,10 @@
 #include "ParasiteEngine/Platform/OpenGL/OpenGLShader.h"
 #include "ParasiteEngine/Scene/SceneSerializer.h"
 #include "ParasiteEngine/Utils/PlatformUtils.h"
+#include "ParasiteEngine/Math/Math.h"
+#include "ParasiteEngine/Math/Vector.h"
 
+#include "ImGuizmo.h"
 #include "ImGui/imgui.h"
 #include "glm/gtc/type_ptr.hpp"
 
@@ -130,7 +133,7 @@ namespace Parasite
 
 		bViewportFocused = ImGui::IsWindowFocused();
 		bViewportHovered = ImGui::IsWindowHovered();
-		CApplication::Get().GetImGuiLayer()->SetBlockEvents(!bViewportFocused || !bViewportHovered);
+		CApplication::Get().GetImGuiLayer()->SetBlockEvents(!bViewportFocused && !bViewportHovered);
 
 		ImVec2 WindowSize = ImGui::GetContentRegionAvail();
 		if (WindowSize.x != ViewportSize.x || WindowSize.y != ViewportSize.y)
@@ -141,6 +144,9 @@ namespace Parasite
 			Camera.ResizeBounds(ViewportSize.x, ViewportSize.y);
 		}
 		ImGui::Image((void*)(uintptr_t)FrameBuffer->GetColourAttachmentRendererID(), { ViewportSize.x, ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
+
+		DrawGizmos();
+
 		ImGui::End();
 		ImGui::PopStyleVar();
 	}
@@ -151,6 +157,49 @@ namespace Parasite
 
 		CEventDispatcher Dispatcher(InEvent);
 		Dispatcher.Dispatch<CPressedKeyEvent>(PE_BIND_EVENT_FUNC(CEditorLayer::OnKeyPressed));
+	}
+
+	void CEditorLayer::DrawGizmos()
+	{
+		CEntity Entity = HierarchyPanel.GetSelectionContext();
+		if (Entity && GizmoType >= 0)
+		{
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+
+			float WindowWidth = static_cast<float>(ImGui::GetWindowWidth());
+			float WindowHeight = static_cast<float>(ImGui::GetWindowHeight());
+			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, WindowWidth, WindowHeight);
+
+			auto CameraEntity = ActiveScene->GetPrimaryCameraEntity();
+			const auto& Camera = CameraEntity.GetComponent<SCameraComponent>().Camera;
+			const glm::mat4& CameraProjection = Camera.GetProjectionMatrix();
+			glm::mat4 CameraView = glm::inverse(CameraEntity.GetComponent<STransformComponent>().GetTransform());
+
+			auto& TransformComponent = Entity.GetComponent<STransformComponent>();
+			glm::mat4 Transform = TransformComponent.GetTransform();
+
+			// Snapping
+			bool bShouldSnap = CInput::IsKeyPressed(PE_KEY_LEFT_CONTROL);
+			float SnapValue = GizmoType == ImGuizmo::OPERATION::ROTATE ? 45.0f : 0.5f;
+			float SnapValues[3] = { SnapValue, SnapValue, SnapValue };
+		
+			ImGuizmo::Manipulate(glm::value_ptr(CameraView), glm::value_ptr(CameraProjection), static_cast<ImGuizmo::OPERATION>(GizmoType), 
+									ImGuizmo::LOCAL, glm::value_ptr(Transform), nullptr, bShouldSnap ? SnapValues : nullptr);
+
+			if (ImGuizmo::IsUsing())
+			{
+				glm::vec3 Translation, Rotation, Scale;
+				if (Math::DecomposeTransform(Transform, Translation, Rotation, Scale))
+				{
+					const glm::vec3 DeltaRotation = Rotation - TransformComponent.Rotation;
+
+					TransformComponent.Translation = Translation;
+					TransformComponent.Rotation += DeltaRotation;
+					TransformComponent.Scale = Scale;
+				}
+			}
+		}
 	}
 
 	bool CEditorLayer::OnKeyPressed(CPressedKeyEvent& InEvent)
@@ -165,6 +214,26 @@ namespace Parasite
 
 		switch (InEvent.GetKeyCode())
 		{
+		case PE_KEY_Q:
+		{
+			GizmoType = INDEX_NONE;
+			break;
+		}
+		case PE_KEY_W:
+		{
+			GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+			break;
+		}
+		case PE_KEY_E:
+		{
+			GizmoType = ImGuizmo::OPERATION::ROTATE;
+			break;
+		}
+		case PE_KEY_R:
+		{
+			GizmoType = ImGuizmo::OPERATION::SCALE;
+			break;
+		}
 		case PE_KEY_N:
 		{
 			if (bIsControlPressed)
@@ -198,6 +267,7 @@ namespace Parasite
 			break;
 		}
 		}
+		return false;
 	}
 
 	void CEditorLayer::NewScene()

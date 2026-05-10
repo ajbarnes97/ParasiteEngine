@@ -18,22 +18,17 @@ IncludeDir["Glad"] = "ParasiteEngine/Vendor/Glad/include"
 IncludeDir["ImGui"] = "ParasiteEngine/Vendor/ImGui"
 IncludeDir["glm"] = "ParasiteEngine/Vendor/glm"
 IncludeDir["stb_image"] = "ParasiteEngine/Vendor/stb_image"
-IncludeDir["entty"] = "ParasiteEngine/Vendor/entty"
+IncludeDir["entt"] = "ParasiteEngine/Vendor/entt"
 IncludeDir["yaml_cpp"] = "ParasiteEngine/Vendor/yaml-cpp/include"
+IncludeDir["ImGuizmo"] = "ParasiteEngine/Vendor/ImGuizmo/src"
 
+-- Add premake files
 group "Dependencies"
 	include "ParasiteEngine/Vendor/GLFW"
 	include "ParasiteEngine/Vendor/Glad"
 	include "ParasiteEngine/Vendor/ImGui"
 	include "ParasiteEngine/Vendor/yaml-cpp"
 group ""
-
--- Add premake files
-include "ParasiteEngine/Vendor/GLFW"
-include "ParasiteEngine/Vendor/Glad"
-include "ParasiteEngine/Vendor/ImGui"
-include "ParasiteEngine/Vendor/yaml-cpp"
-
 
 project "ParasiteEngine"
 	location "ParasiteEngine"
@@ -56,9 +51,11 @@ project "ParasiteEngine"
 	files
 	{
 		"%{prj.name}/Source/**.h",
+		"%{prj.name}/Source/**.cpp",
 		"%{prj.name}/Vendor/stb_image/**.h",
 		"%{prj.name}/Vendor/stb_image/**.cpp",
-		"%{prj.name}/Source/**.cpp",
+		"%{prj.name}/Vendor/ImGuizmo/src/**.h",
+		"%{prj.name}/Vendor/ImGuizmo/src/**.cpp",
 	}
 
 	defines
@@ -76,8 +73,9 @@ project "ParasiteEngine"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.entty}",
+		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.ImGuizmo}",
 	}
 
 	links
@@ -88,6 +86,9 @@ project "ParasiteEngine"
 		"opengl32.lib",
 		"yaml-cpp"
 	}
+
+	filter "files:**/ImGuizmo/src/**.cpp"
+		flags { "NoPCH" }
 
 	filter "system:windows"
 		systemversion "latest"
@@ -144,8 +145,9 @@ project "ParasiteEditor"
 		"ParasiteEngine/Source",
 		"ParasiteEngine/Vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.entty}",
+		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.ImGuizmo}",
 	}
 
 	links
@@ -206,7 +208,7 @@ project "Sandbox"
 		"ParasiteEngine/Source",
 		"ParasiteEngine/Vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.entty}",
+		"%{IncludeDir.entt}",
 	}
 
 	links
