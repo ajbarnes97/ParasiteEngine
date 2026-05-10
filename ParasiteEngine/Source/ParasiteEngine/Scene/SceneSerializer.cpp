@@ -7,7 +7,7 @@
 #include "fstream"
 #include "yaml-cpp/yaml.h"
 
-namespace  YAML
+namespace YAML
 {
 	template<>
 	struct convert<glm::vec3>

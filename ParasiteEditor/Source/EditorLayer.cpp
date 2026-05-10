@@ -6,6 +6,9 @@
 #include "ParasiteEngine/Math/Math.h"
 #include "ParasiteEngine/Math/Vector.h"
 
+#include "Settings/EditorSettingsSerializer.h"
+
+
 #include "ImGuizmo.h"
 #include "ImGui/imgui.h"
 #include "glm/gtc/type_ptr.hpp"
@@ -20,6 +23,25 @@ namespace Parasite
 
 	void CEditorLayer::OnAttach()
 	{
+		if (!CEditorSettingsSerializer::Load(SettingsPath, EditorStyle))
+		{
+			PE_CORE_WARN("Failed to load editor settings from path: ({0}). Creating default.", SettingsPath);
+			CEditorSettingsSerializer::Save(SettingsPath, EditorStyle);
+		}
+
+		EditorSettingsPanel.OnStyleChanged = (
+			[this](const SColour& InColour)
+			{
+				ApplyEditorTheme();
+			});
+		EditorSettingsPanel.OnEditorSettingsApplied = (
+			[this](const SEditorSettings* InSettings)
+			{
+				CEditorSettingsSerializer::Save(SettingsPath, EditorStyle);
+			});
+
+		ApplyEditorTheme();
+
 		SFrameBufferSpecification Specification;
 		Specification.Width = 1280;
 		Specification.Height = 720;
@@ -52,8 +74,6 @@ namespace Parasite
 
 	void CEditorLayer::OnImGuiRender()
 	{
-		EditorSettings.OnImGuiRender();
-
 		static bool bOpenDockspace = true;
 
 		ImGuiDockNodeFlags DockspaceFlags = ImGuiDockNodeFlags_None;
@@ -81,70 +101,14 @@ namespace Parasite
 
 		ImGuiID DockspaceID = ImGui::GetID("MyDockSpace");
 		ImGui::DockSpace(DockspaceID, ImVec2(0.0f, 0.0f), DockspaceFlags);
-
 		Style.WindowMinSize.x = MinWindowSize;
 
-		if (ImGui::BeginMainMenuBar())
-		{
-			if (ImGui::BeginMenu("File"))
-			{
-				if (ImGui::MenuItem("New", "Ctr+N"))
-				{
-					NewScene();
-				}
-				if (ImGui::MenuItem("Save", "Ctr+S"))
-				{
-					SaveScene();
-				}
-				if (ImGui::MenuItem("Open", "Ctr+O"))
-				{
-					OpenScene();
-				}
-				if (ImGui::MenuItem("Save As", "Ctr+Shift+S"))
-				{
-					SaveSceneAs();
-				}
+		DrawMainMenuBar();
 
-				if (ImGui::MenuItem("Exit"))
-				{
-					CApplication::Get().Close();
-				}
-
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("Edit")) 
-			{
-				if (ImGui::MenuItem("Editor Settings"))
-				{
-					EditorSettings.ShowWindow();
-				}
-				ImGui::EndMenu();
-			}
-
-			ImGui::EndMainMenuBar();
-		}
-		ImGui::End();
-
+		EditorSettingsPanel.OnImGuiRender();
 		HierarchyPanel.OnImGuiRender();
 
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-		ImGui::Begin("Viewport");
-
-		bViewportFocused = ImGui::IsWindowFocused();
-		bViewportHovered = ImGui::IsWindowHovered();
-		CApplication::Get().GetImGuiLayer()->SetBlockEvents(!bViewportFocused && !bViewportHovered);
-
-		ImVec2 WindowSize = ImGui::GetContentRegionAvail();
-		if (WindowSize.x != ViewportSize.x || WindowSize.y != ViewportSize.y)
-		{
-			ViewportSize = { WindowSize.x, WindowSize.y };
-			FrameBuffer->Resize(static_cast<uint32_t>(ViewportSize.x), static_cast<uint32_t>(ViewportSize.y));
-		
-			Camera.ResizeBounds(ViewportSize.x, ViewportSize.y);
-		}
-		ImGui::Image((void*)(uintptr_t)FrameBuffer->GetColourAttachmentRendererID(), { ViewportSize.x, ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
-
+		DrawViewport();
 		DrawGizmos();
 
 		ImGui::End();
@@ -161,6 +125,11 @@ namespace Parasite
 
 	void CEditorLayer::DrawGizmos()
 	{
+		if (!ActiveScene)
+		{
+			return;
+		}
+
 		CEntity Entity = HierarchyPanel.GetSelectionContext();
 		if (Entity && GizmoType >= 0)
 		{
@@ -170,7 +139,7 @@ namespace Parasite
 			float WindowWidth = static_cast<float>(ImGui::GetWindowWidth());
 			float WindowHeight = static_cast<float>(ImGui::GetWindowHeight());
 			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, WindowWidth, WindowHeight);
-
+			
 			auto CameraEntity = ActiveScene->GetPrimaryCameraEntity();
 			const auto& Camera = CameraEntity.GetComponent<SCameraComponent>().Camera;
 			const glm::mat4& CameraProjection = Camera.GetProjectionMatrix();
@@ -204,7 +173,7 @@ namespace Parasite
 
 	bool CEditorLayer::OnKeyPressed(CPressedKeyEvent& InEvent)
 	{
-		if (InEvent.GetRepeatCount() > 0)
+		if (InEvent.GetRepeatCount() > 0) 
 		{
 			return false;
 		}
@@ -263,7 +232,6 @@ namespace Parasite
 					SaveScene();
 				}
 			}
-
 			break;
 		}
 		}
@@ -308,5 +276,109 @@ namespace Parasite
 			CSceneSerializer SceneSerializer(ActiveScene);
 			SceneSerializer.Serialize(Filepath);
 		}
+	}
+
+	void CEditorLayer::DrawMainMenuBar()
+	{
+		if (ImGui::BeginMainMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("New", "Ctr+N"))
+				{
+					NewScene();
+				}
+				if (ImGui::MenuItem("Save", "Ctr+S"))
+				{
+					SaveScene();
+				}
+				if (ImGui::MenuItem("Open", "Ctr+O"))
+				{
+					OpenScene();
+				}
+				if (ImGui::MenuItem("Save As", "Ctr+Shift+S"))
+				{
+					SaveSceneAs();
+				}
+
+				if (ImGui::MenuItem("Exit"))
+				{
+					CApplication::Get().Close();
+				}
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Edit"))
+			{
+				if (ImGui::MenuItem("Editor Settings"))
+				{
+					EditorSettingsPanel.ShowWindow(&EditorStyle);
+				}
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMainMenuBar();
+		}
+		ImGui::End();
+	}
+
+	void CEditorLayer::DrawViewport()
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImGui::Begin("Viewport");
+
+		bViewportFocused = ImGui::IsWindowFocused();
+		bViewportHovered = ImGui::IsWindowHovered();
+		CApplication::Get().GetImGuiLayer()->SetBlockEvents(!bViewportFocused && !bViewportHovered);
+
+		ImVec2 WindowSize = ImGui::GetContentRegionAvail();
+		if (WindowSize.x != ViewportSize.x || WindowSize.y != ViewportSize.y)
+		{
+			ViewportSize = { WindowSize.x, WindowSize.y };
+			FrameBuffer->Resize(static_cast<uint32_t>(ViewportSize.x), static_cast<uint32_t>(ViewportSize.y));
+
+			Camera.ResizeBounds(ViewportSize.x, ViewportSize.y);
+		}
+		ImGui::Image((void*)(uintptr_t)FrameBuffer->GetColourAttachmentRendererID(), { ViewportSize.x, ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
+	}
+
+	void CEditorLayer::ApplyEditorTheme()
+	{
+		auto& StyleColours = ImGui::GetStyle().Colors;
+		StyleColours[ImGuiCol_WindowBg] = ToImVec4(EditorStyle.Background);
+		StyleColours[ImGuiCol_Border] = ToImVec4(EditorStyle.Border);
+
+		// Headers
+		StyleColours[ImGuiCol_Header] = ToImVec4(EditorStyle.Header);
+		StyleColours[ImGuiCol_HeaderHovered] = ToImVec4(EditorStyle.HeaderHovered);
+		StyleColours[ImGuiCol_HeaderActive] = ToImVec4(EditorStyle.HeaderActive);
+
+		// Buttons
+		StyleColours[ImGuiCol_Button] = ToImVec4(EditorStyle.Button);
+		StyleColours[ImGuiCol_ButtonHovered] = ToImVec4(EditorStyle.ButtonHovered);
+		StyleColours[ImGuiCol_ButtonActive] = ToImVec4(EditorStyle.ButtonActive);
+
+		// Frame Background
+		StyleColours[ImGuiCol_FrameBg] = ToImVec4(EditorStyle.FrameBackground);
+		StyleColours[ImGuiCol_FrameBgHovered] = ToImVec4(EditorStyle.FrameHovered);
+		StyleColours[ImGuiCol_FrameBgActive] = ToImVec4(EditorStyle.FrameActive);
+
+		// Tabs
+		StyleColours[ImGuiCol_Tab] = ToImVec4(EditorStyle.Tab);
+		StyleColours[ImGuiCol_TabHovered] = ToImVec4(EditorStyle.TabHovered);
+		StyleColours[ImGuiCol_TabActive] = ToImVec4(EditorStyle.TabActive);
+		StyleColours[ImGuiCol_TabUnfocused] = ToImVec4(EditorStyle.TabUnfocused);
+		StyleColours[ImGuiCol_TabUnfocusedActive] = ToImVec4(EditorStyle.TabUnfocusedActive);
+
+		// Title
+		StyleColours[ImGuiCol_TitleBg] = ToImVec4(EditorStyle.Title);
+		StyleColours[ImGuiCol_TitleBgActive] = ToImVec4(EditorStyle.TitleActive);
+		StyleColours[ImGuiCol_TitleBgCollapsed] = ToImVec4(EditorStyle.TitleCollapsed);
+	}
+
+	ImVec4 CEditorLayer::ToImVec4(const SColour& InColour)
+	{
+		return ImVec4(InColour.R, InColour.G, InColour.B, InColour.A);
 	}
 }

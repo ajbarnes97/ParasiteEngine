@@ -150,6 +150,11 @@ project "ParasiteEditor"
 		"%{IncludeDir.ImGuizmo}",
 	}
 
+	defines
+	{
+		"YAML_CPP_STATIC_DEFINE"
+	}
+
 	links
 	{
 		"ParasiteEngine"

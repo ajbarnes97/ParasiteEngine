@@ -8,9 +8,13 @@ namespace Parasite
 	class SColour
 	{
 	public:
-		struct
+		union
 		{
-			float R, G, B, A;
+			struct
+			{
+				float R, G, B, A;
+			};
+			float Data[4];
 		};
 
 		SColour() : R(1.0f), G(1.0f), B(1.0f), A(1.0f) {}

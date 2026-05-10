@@ -45,8 +45,6 @@ namespace Parasite
 			Style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
-		ApplyEditorTheme();
-
 		CApplication& Application = CApplication::Get();
 		GLFWwindow* Window = static_cast<GLFWwindow*>(Application.GetWindow().GetNativeWindow());
 
@@ -95,44 +93,5 @@ namespace Parasite
 			ImGui::RenderPlatformWindowsDefault();
 			glfwMakeContextCurrent(Context);
 		}
-	}
-
-	ImVec4 CImGuiLayer::ToImVec4(const SColour& InColour)
-	{
-		return ImVec4(InColour.R, InColour.G, InColour.B, InColour.A);
-	}
-
-	void CImGuiLayer::ApplyEditorTheme()
-	{
-		auto& StyleColours = ImGui::GetStyle().Colors;
-		StyleColours[ImGuiCol_WindowBg] = ToImVec4(EditorStyle.Background);
-		StyleColours[ImGuiCol_Border] = ToImVec4(EditorStyle.Border);
-		
-		// Headers
-		StyleColours[ImGuiCol_Header] = ToImVec4(EditorStyle.Header);
-		StyleColours[ImGuiCol_HeaderHovered] = ToImVec4(EditorStyle.HeaderHover);
-		StyleColours[ImGuiCol_HeaderActive] = ToImVec4(EditorStyle.HeaderActive);
-
-		// Buttons
-		StyleColours[ImGuiCol_Button] = ToImVec4(EditorStyle.Button);
-		StyleColours[ImGuiCol_ButtonHovered] = ToImVec4(EditorStyle.ButtonHoverd);
-		StyleColours[ImGuiCol_ButtonActive] = ToImVec4(EditorStyle.ButtonActive);
-
-		// Frame Background
-		StyleColours[ImGuiCol_FrameBg] = ToImVec4(EditorStyle.FrameBackground);
-		StyleColours[ImGuiCol_FrameBgHovered] = ToImVec4(EditorStyle.FrameHovered);
-		StyleColours[ImGuiCol_FrameBgActive] = ToImVec4(EditorStyle.FrameActive);
-
-		// Tabs
-		StyleColours[ImGuiCol_Tab] = ToImVec4(EditorStyle.Tab);
-		StyleColours[ImGuiCol_TabHovered] = ToImVec4(EditorStyle.TabHovered);
-		StyleColours[ImGuiCol_TabActive] = ToImVec4(EditorStyle.TabActive);
-		StyleColours[ImGuiCol_TabUnfocused] = ToImVec4(EditorStyle.TabUnfocused);
-		StyleColours[ImGuiCol_TabUnfocusedActive] = ToImVec4(EditorStyle.TabUnfocusedActive);
-		
-		// Title
-		StyleColours[ImGuiCol_TitleBg] = ToImVec4(EditorStyle.Title);
-		StyleColours[ImGuiCol_TitleBgActive] = ToImVec4(EditorStyle.TitleActive);
-		StyleColours[ImGuiCol_TitleBgCollapsed] = ToImVec4(EditorStyle.TitleCollapsed);
 	}
 }

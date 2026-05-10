@@ -5,7 +5,7 @@
 #include "ParasiteEngine/Events/Event.h"
 #include "ParasiteEngine/Renderer/CameraController.h"
 #include "Panels/SceneHierarchyPanel.h"
-#include "Panels/EditorSettings.h"
+#include "Panels/EditorSettingsPanel.h"
 
 
 namespace Parasite
@@ -33,6 +33,12 @@ namespace Parasite
 		void SaveScene();
 		void SaveSceneAs();
 
+		void DrawMainMenuBar();
+		void DrawViewport();
+
+		void ApplyEditorTheme();
+		ImVec4 ToImVec4(const SColour& InColour);
+
 	private:
 		COrthographicCameraController Camera;
 		TSharedPtr<CFrameBuffer> FrameBuffer;
@@ -47,6 +53,9 @@ namespace Parasite
 		int GizmoType = INDEX_NONE;
 
 		CSceneHierarchyPanel HierarchyPanel;
-		CEditorSettings EditorSettings;
+		CEditorSettingsPanel EditorSettingsPanel;
+
+		SEditorSettings EditorStyle;
+		std::string SettingsPath = "EditorSettings.peconfig";
 	};
 }
