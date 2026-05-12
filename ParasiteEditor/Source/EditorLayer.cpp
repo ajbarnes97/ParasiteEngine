@@ -346,7 +346,12 @@ namespace Parasite
 	void CEditorLayer::ApplyEditorTheme()
 	{
 		auto& StyleColours = ImGui::GetStyle().Colors;
+
 		StyleColours[ImGuiCol_WindowBg] = ToImVec4(EditorStyle.Background);
+		StyleColours[ImGuiCol_ChildBg] = ToImVec4(EditorStyle.ChildBackground);
+		StyleColours[ImGuiCol_PopupBg] = ToImVec4(EditorStyle.PopupBackground);
+		StyleColours[ImGuiCol_BorderShadow] = ToImVec4(EditorStyle.BorderShadow);
+		StyleColours[ImGuiCol_MenuBarBg] = ToImVec4(EditorStyle.MenuBarBackground);
 		StyleColours[ImGuiCol_Border] = ToImVec4(EditorStyle.Border);
 
 		// Headers
@@ -375,6 +380,69 @@ namespace Parasite
 		StyleColours[ImGuiCol_TitleBg] = ToImVec4(EditorStyle.Title);
 		StyleColours[ImGuiCol_TitleBgActive] = ToImVec4(EditorStyle.TitleActive);
 		StyleColours[ImGuiCol_TitleBgCollapsed] = ToImVec4(EditorStyle.TitleCollapsed);
+
+		// Text
+		StyleColours[ImGuiCol_Text] = ToImVec4(EditorStyle.Text);
+		StyleColours[ImGuiCol_TextDisabled] = ToImVec4(EditorStyle.TextDisabled);
+		StyleColours[ImGuiCol_TextLink] = ToImVec4(EditorStyle.TextLink);
+		StyleColours[ImGuiCol_TextSelectedBg] = ToImVec4(EditorStyle.TextSelectedBackground);
+
+		// Scrollbar
+		StyleColours[ImGuiCol_ScrollbarBg] = ToImVec4(EditorStyle.ScrollbarBackground);
+		StyleColours[ImGuiCol_ScrollbarGrab] = ToImVec4(EditorStyle.ScrollbarGrab);
+		StyleColours[ImGuiCol_ScrollbarGrabHovered] = ToImVec4(EditorStyle.ScrollbarGrabHovered);
+		StyleColours[ImGuiCol_ScrollbarGrabActive] = ToImVec4(EditorStyle.ScrollbarGrabActive);
+
+		// Misc
+		StyleColours[ImGuiCol_CheckMark] = ToImVec4(EditorStyle.CheckMark);
+		StyleColours[ImGuiCol_SliderGrab] = ToImVec4(EditorStyle.SliderGrab);
+		StyleColours[ImGuiCol_SliderGrabActive] = ToImVec4(EditorStyle.SliderGrabActive);
+		StyleColours[ImGuiCol_InputTextCursor] = ToImVec4(EditorStyle.InputTextCursor);
+
+		StyleColours[ImGuiCol_TreeLines] = ToImVec4(EditorStyle.TreeLines);
+		StyleColours[ImGuiCol_DragDropTarget] = ToImVec4(EditorStyle.DragDropTarget);
+		StyleColours[ImGuiCol_DragDropTargetBg] = ToImVec4(EditorStyle.DragDropTargetBackground);
+		StyleColours[ImGuiCol_UnsavedMarker] = ToImVec4(EditorStyle.UnsavedMarker);
+
+		StyleColours[ImGuiCol_ModalWindowDimBg] = ToImVec4(EditorStyle.ModalWindowDimBackground);
+
+		// Separator
+		StyleColours[ImGuiCol_Separator] = ToImVec4(EditorStyle.Separator);
+		StyleColours[ImGuiCol_SeparatorHovered] = ToImVec4(EditorStyle.SeparatorHovered);
+		StyleColours[ImGuiCol_SeparatorActive] = ToImVec4(EditorStyle.SeparatorActive);
+
+		// Resize
+		StyleColours[ImGuiCol_ResizeGrip] = ToImVec4(EditorStyle.ResizeGrip);
+		StyleColours[ImGuiCol_ResizeGripHovered] = ToImVec4(EditorStyle.ResizeGripHovered);
+		StyleColours[ImGuiCol_ResizeGripActive] = ToImVec4(EditorStyle.ResizeGripActive);
+
+		// Additional Tabs
+		StyleColours[ImGuiCol_TabSelected] = ToImVec4(EditorStyle.TabSelected);
+		StyleColours[ImGuiCol_TabDimmed] = ToImVec4(EditorStyle.TabDimmed);
+		StyleColours[ImGuiCol_TabDimmedSelected] = ToImVec4(EditorStyle.TabDimmedSelected);
+		StyleColours[ImGuiCol_TabDimmedSelectedOverline] = ToImVec4(EditorStyle.TabDimmedSelectedOverline);
+
+		// Docking
+		StyleColours[ImGuiCol_DockingPreview] = ToImVec4(EditorStyle.DockingPreview);
+		StyleColours[ImGuiCol_DockingEmptyBg] = ToImVec4(EditorStyle.DockingEmptyBackground);
+
+		// Plot
+		StyleColours[ImGuiCol_PlotLines] = ToImVec4(EditorStyle.PlotLines);
+		StyleColours[ImGuiCol_PlotLinesHovered] = ToImVec4(EditorStyle.PlotLinesHovered);
+		StyleColours[ImGuiCol_PlotHistogram] = ToImVec4(EditorStyle.PlotHistogram);
+		StyleColours[ImGuiCol_PlotHistogramHovered] = ToImVec4(EditorStyle.PlotHistogramHovered);
+
+		// Table
+		StyleColours[ImGuiCol_TableHeaderBg] = ToImVec4(EditorStyle.TableHeaderBackground);
+		StyleColours[ImGuiCol_TableBorderStrong] = ToImVec4(EditorStyle.TableBorderStrong);
+		StyleColours[ImGuiCol_TableBorderLight] = ToImVec4(EditorStyle.TableBorderLight);
+		StyleColours[ImGuiCol_TableRowBg] = ToImVec4(EditorStyle.TableRowBackground);
+		StyleColours[ImGuiCol_TableRowBgAlt] = ToImVec4(EditorStyle.TableRowBackgroundAlt);
+
+		// Navigation
+		StyleColours[ImGuiCol_NavWindowingHighlight] = ToImVec4(EditorStyle.NavWindowingHighlight);
+		StyleColours[ImGuiCol_NavWindowingDimBg] = ToImVec4(EditorStyle.NavWindowingDimBackground);
+		StyleColours[ImGuiCol_NavCursor] = ToImVec4(EditorStyle.NavCursor);
 	}
 
 	ImVec4 CEditorLayer::ToImVec4(const SColour& InColour)
