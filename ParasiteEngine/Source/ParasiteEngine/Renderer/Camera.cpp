@@ -6,7 +6,6 @@
 
 namespace Parasite
 {
-
 	void CCamera::SetOrthographic(float InSize, float InNearClip, float InFarClip)
 	{
 		ProjectionType = EProjectionType::Orthographic;
@@ -27,6 +26,11 @@ namespace Parasite
 
 	void CCamera::SetViewportSize(float InWidth, float InHeight)
 	{
+		if (InWidth <= 0.0f || InHeight <= 0.0f)
+		{
+			return;
+		}
+
 		AspectRatio = InWidth / InHeight;
 		RecalculateProjection();
 	}

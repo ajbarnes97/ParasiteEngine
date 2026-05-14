@@ -8,7 +8,6 @@
 
 #include "Settings/EditorSettingsSerializer.h"
 
-
 #include "ImGuizmo.h"
 #include "ImGui/imgui.h"
 #include "glm/gtc/type_ptr.hpp"
@@ -47,6 +46,8 @@ namespace Parasite
 		Specification.Height = 720;
 
 		FrameBuffer = CFrameBuffer::Create(Specification);
+
+		EditorCamera = CEditorCamera(30.0f, 1.7777f, 0.1f, 1000.0f);
 	}
 
 	void CEditorLayer::OnDetach()
@@ -55,10 +56,13 @@ namespace Parasite
 
 	void CEditorLayer::OnUpdate(CTimestep InTimestep)
 	{
+		EditorCamera.SetViewportSize(ViewportSize.x, ViewportSize.y); // todo: this should instead be bound to resize event
+
 		if (bViewportFocused)
 		{
 			Camera.OnUpdate(InTimestep);
 		}
+		EditorCamera.OnUpdate(InTimestep);
 
 		FrameBuffer->Bind();
 
@@ -67,7 +71,7 @@ namespace Parasite
 
 		if (ActiveScene)
 		{
-			ActiveScene->OnUpdate(InTimestep);
+			ActiveScene->OnUpdateEditor(InTimestep, EditorCamera);
 		}
 		FrameBuffer->Unbind();
 	}
@@ -118,6 +122,7 @@ namespace Parasite
 	void CEditorLayer::OnEvent(CEvent& InEvent)
 	{
 		Camera.OnEvent(InEvent);
+		EditorCamera.OnEvent(InEvent);
 
 		CEventDispatcher Dispatcher(InEvent);
 		Dispatcher.Dispatch<CPressedKeyEvent>(PE_BIND_EVENT_FUNC(CEditorLayer::OnKeyPressed));
@@ -140,10 +145,13 @@ namespace Parasite
 			float WindowHeight = static_cast<float>(ImGui::GetWindowHeight());
 			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, WindowWidth, WindowHeight);
 			
-			auto CameraEntity = ActiveScene->GetPrimaryCameraEntity();
-			const auto& Camera = CameraEntity.GetComponent<SCameraComponent>().Camera;
-			const glm::mat4& CameraProjection = Camera.GetProjectionMatrix();
-			glm::mat4 CameraView = glm::inverse(CameraEntity.GetComponent<STransformComponent>().GetTransform());
+			//auto CameraEntity = ActiveScene->GetPrimaryCameraEntity();
+			//const auto& Camera = CameraEntity.GetComponent<SCameraComponent>().Camera;
+			//const glm::mat4& CameraProjection = Camera.GetProjectionMatrix();
+			//glm::mat4 CameraView = glm::inverse(CameraEntity.GetComponent<STransformComponent>().GetTransform());
+
+			const glm::mat4& CameraProjection = EditorCamera.GetProjection();
+			glm::mat4 CameraView = EditorCamera.GetViewMatrix();
 
 			auto& TransformComponent = Entity.GetComponent<STransformComponent>();
 			glm::mat4 Transform = TransformComponent.GetTransform();

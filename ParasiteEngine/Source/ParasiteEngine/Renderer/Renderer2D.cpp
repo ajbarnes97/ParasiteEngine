@@ -119,6 +119,18 @@ namespace Parasite
 		Data.TextureSlotIndex = 1;
 	}
 
+	void CRenderer2D::BeginScene(const CEditorCamera& InCamera)
+	{
+		glm::mat4 ViewProj = InCamera.GetViewProjection();
+
+		Data.TextureShader->Bind();
+		Data.TextureShader->SetMat4("u_ViewProjection", ViewProj);
+
+		Data.QuadIndexCount = 0;
+		Data.QuadVertexBufferPtr = Data.QuadVertexBufferBase;
+		Data.TextureSlotIndex = 1;
+	}
+
 	void CRenderer2D::EndScene()
 	{
 		uint32_t DataSize = static_cast<uint32_t>(Data.QuadVertexBufferPtr - Data.QuadVertexBufferBase) * sizeof(SQuadVertex);

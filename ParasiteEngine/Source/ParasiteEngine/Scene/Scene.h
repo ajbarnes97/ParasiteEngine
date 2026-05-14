@@ -2,6 +2,7 @@
 #include "ParasiteEngine/Core/Timestep.h"
 
 #include "../entt/entt.hpp"
+#include "../Renderer/EditorCamera.h"
 
 
 namespace Parasite
@@ -17,7 +18,8 @@ namespace Parasite
 		CEntity CreateEntity(const std::string& InName = std::string());
 		void DestroyEntity(CEntity InEntity);
 
-		void OnUpdate(CTimestep InTimestep);
+		void OnUpdateEditor(CTimestep InTimestep, CEditorCamera& InCamera);
+		void OnUpdateRuntime(CTimestep InTimestep);
 
 		CEntity GetPrimaryCameraEntity();
 

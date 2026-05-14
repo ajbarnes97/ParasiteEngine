@@ -6,6 +6,7 @@
 #include "ParasiteEngine/Renderer/CameraController.h"
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/EditorSettingsPanel.h"
+#include "ParasiteEngine/Renderer/EditorCamera.h"
 
 
 namespace Parasite
@@ -42,6 +43,8 @@ namespace Parasite
 	private:
 		COrthographicCameraController Camera;
 		TSharedPtr<CFrameBuffer> FrameBuffer;
+
+		CEditorCamera EditorCamera;
 
 		TSharedPtr<CScene> ActiveScene;
 		std::string ActiveSceneFilePath;

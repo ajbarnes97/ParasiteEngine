@@ -16,7 +16,6 @@ namespace Parasite
 
 	CScene::~CScene()
 	{
-
 	}
 
 	CEntity CScene::CreateEntity(const std::string& InName)
@@ -34,7 +33,23 @@ namespace Parasite
 		Registry.destroy(InEntity);
 	}
 
-	void CScene::OnUpdate(CTimestep InTimestep)
+	void CScene::OnUpdateEditor(CTimestep InTimestep, CEditorCamera& InCamera)
+	{
+		CRenderer2D::BeginScene(InCamera);
+
+		auto Group = Registry.group<STransformComponent, SSpriteRendererComponent>();
+		for (auto Entity : Group)
+		{
+			auto Transform = Group.get<STransformComponent>(Entity);
+			auto Sprite = Group.get<SSpriteRendererComponent>(Entity);
+
+			CRenderer2D::DrawQuad(Transform.GetTransform(), Sprite.Colour);
+		}
+
+		CRenderer2D::EndScene();
+	}
+
+	void CScene::OnUpdateRuntime(CTimestep InTimestep)
 	{
 		// Update scripts
 		{

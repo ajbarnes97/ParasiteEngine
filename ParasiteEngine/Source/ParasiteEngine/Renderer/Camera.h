@@ -1,7 +1,7 @@
 #pragma once
 
 #include "glm/glm.hpp"
-
+#include "glm/gtc/matrix_transform.hpp"
 
 namespace Parasite
 {
@@ -40,10 +40,10 @@ namespace Parasite
 
 		const inline glm::mat4& GetProjectionMatrix() const { return ProjectionMatrix; }
 
-	private:
+	protected:
 		void RecalculateProjection();
 
-	private:
+	protected:
 		EProjectionType ProjectionType = EProjectionType::Perspective;
 
 		float PerspectiveFOV = 45.0f;

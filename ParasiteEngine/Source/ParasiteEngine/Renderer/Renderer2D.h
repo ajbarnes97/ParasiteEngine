@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Texture.h"
 #include "SubTexture2D.h"
+#include "EditorCamera.h"
 
 
 namespace Parasite
@@ -13,6 +14,7 @@ namespace Parasite
 		static void Shutdown();
 		
 		static void BeginScene(const CCamera& InCamera, const glm::mat4& InTransform);
+		static void BeginScene(const CEditorCamera& InCamera);
 		static void EndScene();
 		static void Flush();
 
