@@ -42,6 +42,7 @@ namespace Parasite
 		ApplyEditorTheme();
 
 		SFrameBufferSpecification Specification;
+		Specification.Attachments = { EFrameBufferTextureFormat::RGBA8, EFrameBufferTextureFormat::RGBA8, EFrameBufferTextureFormat::Depth };
 		Specification.Width = 1280;
 		Specification.Height = 720;
 

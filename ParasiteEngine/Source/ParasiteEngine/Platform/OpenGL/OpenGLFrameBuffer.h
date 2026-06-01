@@ -10,7 +10,7 @@ namespace Parasite
 		virtual ~COpenGLFrameBuffer();
 
 		virtual inline const SFrameBufferSpecification& GetSpecification() const override { return Specification; }
-		virtual inline uint32_t GetColourAttachmentRendererID() const override { return ColourAttachment; };
+		virtual inline uint32_t GetColourAttachmentRendererID(uint32_t InIndex = 0) const override { return ColourAttachments[InIndex]; };
 
 		virtual void Resize(uint32_t InWindowSizeX, uint32_t InWindowSizeY) override;
 
@@ -21,7 +21,12 @@ namespace Parasite
 
 	private:
 		uint32_t RendererID = 0;
-		uint32_t ColourAttachment = 0, DepthAttachment = 0;
 		SFrameBufferSpecification Specification;
+
+		std::vector<SFrameBufferTextureSpecification> ColourAttachmentSpecifications;
+		SFrameBufferTextureSpecification DepthAttachmentSpecification;
+
+		std::vector<uint32_t> ColourAttachments;
+		uint32_t DepthAttachment;
 	};
 }
