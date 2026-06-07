@@ -42,7 +42,7 @@ namespace Parasite
 		ApplyEditorTheme();
 
 		SFrameBufferSpecification Specification;
-		Specification.Attachments = { EFrameBufferTextureFormat::RGBA8, EFrameBufferTextureFormat::RGBA8, EFrameBufferTextureFormat::Depth };
+		Specification.Attachments = { EFrameBufferTextureFormat::RGBA8, EFrameBufferTextureFormat::RED_INTEGER, EFrameBufferTextureFormat::Depth };
 		Specification.Width = 1280;
 		Specification.Height = 720;
 
@@ -70,10 +70,28 @@ namespace Parasite
 		CRenderCommand::SetClearColour(glm::vec4(0.1f, 0.1f, 0.1f, 1));
 		CRenderCommand::Clear();
 
+		// Clear entity ID attachment to -1
+		FrameBuffer->ClearAttachment(1, -1);
+
 		if (ActiveScene)
 		{
 			ActiveScene->OnUpdateEditor(InTimestep, EditorCamera);
 		}
+
+		auto [MX, MY] = ImGui::GetMousePos();
+		MX -= ViewportBounds[0].x;
+		MY -= ViewportBounds[0].y;
+		glm::vec2 ViewportSize = ViewportBounds[1] - ViewportBounds[0];
+		MY = ViewportSize.y - MY;
+
+		int MouseX = static_cast<int>(MX);
+		int MouseY = static_cast<int>(MY);
+		if (MouseX >= 0 && MouseY >= 0 && MouseX < static_cast<int>(ViewportSize.x) && MouseY < static_cast<int>(ViewportSize.y))
+		{
+			int PixelData = FrameBuffer->ReadPixel(1, MouseX, MouseY);
+			PE_CORE_LOG("Mouse = {0}, {1} | Data: {2}", MouseX, MouseY, PixelData);
+		}
+
 		FrameBuffer->Unbind();
 	}
 
@@ -336,6 +354,7 @@ namespace Parasite
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::Begin("Viewport");
+		auto ViewportOffset = ImGui::GetCursorPos();
 
 		bViewportFocused = ImGui::IsWindowFocused();
 		bViewportHovered = ImGui::IsWindowHovered();
@@ -350,6 +369,14 @@ namespace Parasite
 			Camera.ResizeBounds(ViewportSize.x, ViewportSize.y);
 		}
 		ImGui::Image((void*)(uintptr_t)FrameBuffer->GetColourAttachmentRendererID(), { ViewportSize.x, ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
+
+		ImVec2 MinBounds = ImGui::GetWindowPos();
+		MinBounds.x += ViewportOffset.x;
+		MinBounds.y += ViewportOffset.y;
+
+		ImVec2 MaxBounds = { MinBounds.x + WindowSize.x, MinBounds.y + WindowSize.y };
+		ViewportBounds[0] = { MinBounds.x, MinBounds.y };
+		ViewportBounds[1] = { MaxBounds.x, MaxBounds.y };
 	}
 
 	void CEditorLayer::ApplyEditorTheme()

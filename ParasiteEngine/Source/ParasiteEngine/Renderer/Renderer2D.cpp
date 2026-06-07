@@ -17,6 +17,9 @@ namespace Parasite
 		glm::vec2 TexCoord;
 		float TexIndex;
 		float TilingFactor;
+
+		// Editor-Only
+		int EntityID = -1;
 	};
 
 	struct SRenderer2DData
@@ -55,6 +58,7 @@ namespace Parasite
 				{ EShaderDataType::Float2,	"a_TexCoord" },
 				{ EShaderDataType::Float,	"a_TexIndex" },
 				{ EShaderDataType::Float,	"a_TilingFactor" },
+				{ EShaderDataType::Int,		"a_EntityID" },
 			}
 		);
 		Data.QuadVertexArray->AddVertexBuffer(Data.QuadVertexBuffer);
@@ -219,7 +223,7 @@ namespace Parasite
 		Data.QuadIndexCount += 6;
 	}
 
-	void CRenderer2D::DrawQuad(const glm::mat4& InTransform, const glm::vec4& InColour, const float InTilingFactor)
+	void CRenderer2D::DrawQuad(const glm::mat4& InTransform, const glm::vec4& InColour, const float InTilingFactor, int InEntityId)
 	{
 		if (Data.QuadIndexCount >= SRenderer2DData::MaxIndices)
 		{
@@ -237,13 +241,14 @@ namespace Parasite
 			Data.QuadVertexBufferPtr->TexCoord = TextureCoords[Index];
 			Data.QuadVertexBufferPtr->TexIndex = TextureIndex;
 			Data.QuadVertexBufferPtr->TilingFactor = InTilingFactor;
+			Data.QuadVertexBufferPtr->EntityID = InEntityId;
 			Data.QuadVertexBufferPtr++;
 		}
 
 		Data.QuadIndexCount += 6;
 	}
 
-	void CRenderer2D::DrawQuad(const glm::mat4& InTransform, const TSharedPtr<CTexture>& InTexture, const glm::vec4& InTintColour, const float InTilingFactor)
+	void CRenderer2D::DrawQuad(const glm::mat4& InTransform, const TSharedPtr<CTexture>& InTexture, const glm::vec4& InTintColour, const float InTilingFactor, int InEntityId)
 	{
 		if (Data.QuadIndexCount >= SRenderer2DData::MaxIndices)
 		{
@@ -277,6 +282,7 @@ namespace Parasite
 			Data.QuadVertexBufferPtr->TexCoord = TextureCoords[Index];
 			Data.QuadVertexBufferPtr->TexIndex = TextureIndex;
 			Data.QuadVertexBufferPtr->TilingFactor = InTilingFactor;
+			Data.QuadVertexBufferPtr->EntityID = InEntityId;
 			Data.QuadVertexBufferPtr++;
 		}
 
@@ -299,6 +305,11 @@ namespace Parasite
 			* glm::scale(glm::mat4(1.0f), { InSize.x, InSize.y, 1.0f });
 
 		DrawQuad(Transform, InTexture, InTintColour, InTilingFactor);
+	}
+
+	void CRenderer2D::DrawSprite(const glm::mat4& InTransform, SSpriteRendererComponent& InSpriteComponent, int InEntityID)
+	{
+		DrawQuad(InTransform, InSpriteComponent.Colour, 1.0f, InEntityID);
 	}
 
 	void CRenderer2D::FlushAndReset()

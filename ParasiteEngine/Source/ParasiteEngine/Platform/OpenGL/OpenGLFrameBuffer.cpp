@@ -8,14 +8,14 @@ namespace Parasite
 {
 	namespace Utils
 	{
-		static GLenum TextureTarget(bool bInMultisampled)
+		static GLenum GetTextureTarget(bool bInMultisampled)
 		{
 			return bInMultisampled ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 		}
 
 		static void BindTexture(bool bInMultisampledm, uint32_t InID)
 		{
-			glBindTexture(TextureTarget(bInMultisampledm), InID);
+			glBindTexture(GetTextureTarget(bInMultisampledm), InID);
 		}
 
 		static bool IsDepthFormat(EFrameBufferTextureFormat InFormat)
@@ -29,19 +29,19 @@ namespace Parasite
 
 		static void CreateTextures(bool bInMultisampled, uint32_t* OutID, uint32_t InCount)
 		{
-			glCreateTextures(TextureTarget(bInMultisampled), InCount, OutID);
+			glCreateTextures(GetTextureTarget(bInMultisampled), InCount, OutID);
 		}
 
-		static void AttachColourTexture(uint32_t InID, int InSamples, GLenum InFormat, uint32_t InWidth, uint32_t InHeight, int InIndex)
+		static void AttachColourTexture(uint32_t InID, uint32_t InSamples, GLenum InInternalFormat, GLenum InFormat, uint32_t InWidth, uint32_t InHeight, int InIndex)
 		{
 			bool bMultisample = InSamples > 1;
 			if (bMultisample)
 			{
-				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, InSamples, InFormat, InWidth, InHeight, GL_FALSE);
+				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, InSamples, InInternalFormat, InWidth, InHeight, GL_FALSE);
 			}
 			else
 			{
-				glTexImage2D(GL_TEXTURE_2D, 0, InFormat, InWidth, InHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+				glTexImage2D(GL_TEXTURE_2D, 0, InInternalFormat, InWidth, InHeight, 0, InFormat, GL_UNSIGNED_BYTE, nullptr);
 
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -50,7 +50,7 @@ namespace Parasite
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			}
 
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + InIndex, TextureTarget(bMultisample), InID, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + InIndex, GetTextureTarget(bMultisample), InID, 0);
 		}
 
 		static void AttachDepthTexture(uint32_t InID, int InSamples, GLenum InFormat, GLenum InAttachmentType, uint32_t InWidth, uint32_t InHeight)
@@ -71,7 +71,17 @@ namespace Parasite
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			}
 
-			glFramebufferTexture2D(GL_FRAMEBUFFER, InAttachmentType, TextureTarget(bMultisample), InID, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, InAttachmentType, GetTextureTarget(bMultisample), InID, 0);
+		}
+
+		static GLenum ParasiteTextureFormatToGL(EFrameBufferTextureFormat InFormat)
+		{
+			switch (InFormat)
+			{
+			case EFrameBufferTextureFormat::RGBA8: return GL_RGBA8;
+			case EFrameBufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
+			}
+			return 0;
 		}
 	}
 
@@ -97,8 +107,24 @@ namespace Parasite
 	COpenGLFrameBuffer::~COpenGLFrameBuffer()
 	{
 		glDeleteFramebuffers(1, &RendererID);
-		glDeleteTextures(ColourAttachments.size(), ColourAttachments.data());
+		glDeleteTextures(static_cast<GLsizei>(ColourAttachments.size()), ColourAttachments.data());
 		glDeleteTextures(1, &DepthAttachment);
+	}
+
+	int COpenGLFrameBuffer::ReadPixel(uint32_t InAttachmentIndex, int InX, int InY)
+	{
+		PE_CORE_ASSERT(InAttachmentIndex < ColourAttachments.size(), "Index exceeds number of attachements.");
+		glReadBuffer(GL_COLOR_ATTACHMENT0 + InAttachmentIndex);
+		int PixelData = -1;
+		glReadPixels(InX, InY, 1, 1, GL_RED_INTEGER, GL_INT, &PixelData);
+		return PixelData;
+	}
+
+	void COpenGLFrameBuffer::ClearAttachment(uint32_t InAttachmentIndex, const int InValue)
+	{
+		auto& Spec = ColourAttachmentSpecifications[InAttachmentIndex];
+		GLenum ValueFormat = Utils::ParasiteTextureFormatToGL(Spec.TextureFormat);
+		glClearTexImage(ColourAttachments[InAttachmentIndex], 0, ValueFormat, GL_INT, &InValue);
 	}
 
 	void COpenGLFrameBuffer::Resize(uint32_t InWindowSizeX, uint32_t InWindowSizeY)
@@ -120,7 +146,7 @@ namespace Parasite
 		if (RendererID)
 		{
 			glDeleteFramebuffers(1, &RendererID);
-			glDeleteTextures(ColourAttachments.size(), ColourAttachments.data());
+			glDeleteTextures(static_cast<GLsizei>(ColourAttachments.size()), ColourAttachments.data());
 			glDeleteTextures(1, &DepthAttachment);
 
 			ColourAttachments.clear();
@@ -136,7 +162,7 @@ namespace Parasite
 		if (ColourAttachmentSpecifications.size())
 		{
 			ColourAttachments.resize(ColourAttachmentSpecifications.size());
-			Utils::CreateTextures(bMultisample, ColourAttachments.data(), ColourAttachments.size());
+			Utils::CreateTextures(bMultisample, ColourAttachments.data(), static_cast<uint32_t>(ColourAttachments.size()));
 
 			for (size_t Index = 0; Index < ColourAttachments.size(); Index++)
 			{
@@ -145,7 +171,12 @@ namespace Parasite
 				{
 				case EFrameBufferTextureFormat::RGBA8:
 				{
-					Utils::AttachColourTexture(ColourAttachments[Index], Specification.Samples, GL_RGBA8, Specification.Width, Specification.Height, Index);
+					Utils::AttachColourTexture(ColourAttachments[Index], Specification.Samples, GL_RGBA8, GL_RGBA, Specification.Width, Specification.Height, static_cast<int>(Index));
+					break;
+				}
+				case EFrameBufferTextureFormat::RED_INTEGER:
+				{
+					Utils::AttachColourTexture(ColourAttachments[Index], Specification.Samples, GL_R32I, GL_RED_INTEGER, Specification.Width, Specification.Height, static_cast<int>(Index));
 					break;
 				}
 				}
@@ -170,7 +201,7 @@ namespace Parasite
 		{
 			PE_CORE_ASSERT(ColourAttachments.size() <= 4, "Only supprot max colour attachments 4.");
 			GLenum Buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
-			glDrawBuffers(ColourAttachments.size(), Buffers);
+			glDrawBuffers(static_cast<GLsizei>(ColourAttachments.size()), Buffers);
 		}
 		else if (ColourAttachments.empty())
 		{
@@ -187,6 +218,7 @@ namespace Parasite
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, RendererID);
 		glViewport(0, 0, Specification.Width, Specification.Height);
+
 	}
 
 	void COpenGLFrameBuffer::Unbind()

@@ -4,6 +4,8 @@
 #include "SubTexture2D.h"
 #include "EditorCamera.h"
 
+#include "ParasiteEngine/Scene/Component.h"
+
 
 namespace Parasite
 {
@@ -20,19 +22,20 @@ namespace Parasite
 
 		static void DrawQuad(const glm::vec2& InPosition, const glm::vec2& InSize, const glm::vec4 InColour);
 		static void DrawQuad(const glm::vec3& InPosition, const glm::vec2& InSize, const glm::vec4 InColour);
-
 		static void DrawQuad(const glm::vec2& InPosition, const glm::vec2& InSize, const TSharedPtr<CTexture>& InTexture, const float InTilingFactor = 1.0f, const glm::vec4& InTintColour = glm::vec4(1.0f));
 		static void DrawQuad(const glm::vec3& InPosition, const glm::vec2& InSize, const TSharedPtr<CTexture>& InTexture, const float InTilingFactor = 1.0f, const glm::vec4& InTintColour = glm::vec4(1.0f));
 	
-		static void DrawQuad(const glm::mat4& InTransform, const glm::vec4& InColour = glm::vec4(1.0f), const float InTilingFactor = 1.0f);
-		static void DrawQuad(const glm::mat4& InTransform, const TSharedPtr<CTexture>& InTexture, const glm::vec4& InTintColour = glm::vec4(1.0f), const float InTilingFactor = 1.0f);
-		
+		static void DrawQuad(const glm::mat4& InTransform, const glm::vec4& InColour = glm::vec4(1.0f), const float InTilingFactor = 1.0f, int InEntityId = -1);
+		static void DrawQuad(const glm::mat4& InTransform, const TSharedPtr<CTexture>& InTexture, const glm::vec4& InTintColour = glm::vec4(1.0f), const float InTilingFactor = 1.0f, int InEntityId = -1);
+
 		static void DrawQuad(const glm::vec2& InPosition, const glm::vec2& InSize, const TSharedPtr<CSubTexture2D>& InSubTexture, const float InTilingFactor = 1.0f, const glm::vec4& InTintColour = glm::vec4(1.0f));
 		static void DrawQuad(const glm::vec3& InPosition, const glm::vec2& InSize, const TSharedPtr<CSubTexture2D>& InSubTexture, const float InTilingFactor = 1.0f, const glm::vec4& InTintColour = glm::vec4(1.0f));
 
 		static void DrawRotatedQuad(const glm::vec3& InPosition, const glm::vec2& InSize, const float InRotation, const glm::vec4 InColour);
 		static void DrawRotatedQuad(const glm::vec3& InPosition, const glm::vec2& InSize, const float InRotation, const TSharedPtr<CTexture>& InTexture, const float InTilingFactor = 1.0f, const glm::vec4& InTintColour = glm::vec4(1.0f));
 		static void DrawRotatedQuad(const glm::vec3& InPosition, const glm::vec2& InSize, const float InRotation, const TSharedPtr<CSubTexture2D>& InSubTexture, const float InTilingFactor = 1.0f, const glm::vec4& InTintColour = glm::vec4(1.0f));
+
+		static void DrawSprite(const glm::mat4& InTransform, SSpriteRendererComponent& InSpriteComponent, int InEntityID);
 
 	private:
 		static void FlushAndReset();

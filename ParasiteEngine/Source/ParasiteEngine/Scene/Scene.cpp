@@ -43,7 +43,7 @@ namespace Parasite
 			auto Transform = Group.get<STransformComponent>(Entity);
 			auto Sprite = Group.get<SSpriteRendererComponent>(Entity);
 
-			CRenderer2D::DrawQuad(Transform.GetTransform(), Sprite.Colour);
+			CRenderer2D::DrawSprite(Transform.GetTransform(), Sprite, static_cast<int>(Entity));
 		}
 
 		CRenderer2D::EndScene();

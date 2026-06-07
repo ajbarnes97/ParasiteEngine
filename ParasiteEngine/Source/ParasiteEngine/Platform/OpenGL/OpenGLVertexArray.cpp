@@ -58,14 +58,42 @@ namespace Parasite
 		const auto& Layout = InVertexBuffer->GetLayout();
 		for (const auto& Element : Layout)
 		{
-			glEnableVertexAttribArray(Index);
-			glVertexAttribPointer(Index, Element.GetComponentCount(),
-				ShaderDataTypeToOpenGLBaseType(Element.Type),
-				Element.bNormalized ? GL_TRUE : GL_FALSE,
-				Layout.GetStride(),
-				//(const void*)Element.Offset);
-				(const void*)(uintptr_t)Element.Offset);
-			Index++;
+			switch (Element.Type)
+			{
+			case EShaderDataType::Float: // Fall through
+			case EShaderDataType::Float2: // Fall through
+			case EShaderDataType::Float3: // Fall through
+			case EShaderDataType::Float4: // Fall through
+			{
+				glEnableVertexAttribArray(Index);
+				glVertexAttribPointer(Index, Element.GetComponentCount(),
+					ShaderDataTypeToOpenGLBaseType(Element.Type),
+					Element.bNormalized ? GL_TRUE : GL_FALSE,
+					Layout.GetStride(),
+					(const void*)(uintptr_t)Element.Offset);
+				Index++;
+				break;
+			}
+			case EShaderDataType::Int: // Fall through
+			case EShaderDataType::Int2: // Fall through
+			case EShaderDataType::Int3: // Fall through
+			case EShaderDataType::Int4: // Fall through
+			case EShaderDataType::Bool: // Fall through
+			{
+				glEnableVertexAttribArray(Index);
+				glVertexAttribIPointer(Index, Element.GetComponentCount(),
+					ShaderDataTypeToOpenGLBaseType(Element.Type),
+					Layout.GetStride(),
+					(const void*)(uintptr_t)Element.Offset);
+				Index++;
+				break;
+			}
+			default:
+			{
+				PE_CORE_ASSERT(false, "Unknow shader type!");
+				break;
+			}
+			}
 		}
 
 		VertexBuffers.push_back(InVertexBuffer);

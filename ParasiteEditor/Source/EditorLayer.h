@@ -52,6 +52,7 @@ namespace Parasite
 		bool bPrimaryCamera = true;
 		bool bViewportFocused = false, bViewportHovered = false;
 		glm::vec2 ViewportSize = { 0.0f, 0.0f };
+		glm::vec2 ViewportBounds[2];
 
 		int GizmoType = INDEX_NONE;
 

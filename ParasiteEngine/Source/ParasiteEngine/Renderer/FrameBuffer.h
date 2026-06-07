@@ -7,7 +7,11 @@ namespace Parasite
 	enum class EFrameBufferTextureFormat
 	{
 		None = 0,
-		RGBA8, // Colour
+		
+		// Colour
+		RGBA8, 
+		RED_INTEGER,
+		
 		DEPTH24STENCIL8, // Depth/Stencil
 		
 		Depth = DEPTH24STENCIL8, // Defaults
@@ -53,6 +57,10 @@ namespace Parasite
 
 		virtual inline const SFrameBufferSpecification& GetSpecification() const = 0;
 		virtual inline uint32_t GetColourAttachmentRendererID(uint32_t InIndex = 0) const = 0;
+
+		virtual int ReadPixel(uint32_t InAttachmentIndex, int InX, int InY) = 0;
+
+		virtual void ClearAttachment(uint32_t InAttachmentIndex, const int InValue) = 0;
 
 		virtual void Resize(uint32_t InWindowSizeX, uint32_t InWindowSizeY) = 0;
 
