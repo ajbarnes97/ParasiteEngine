@@ -76,20 +76,21 @@ namespace Parasite
 		if (ActiveScene)
 		{
 			ActiveScene->OnUpdateEditor(InTimestep, EditorCamera);
-		}
 
-		auto [MX, MY] = ImGui::GetMousePos();
-		MX -= ViewportBounds[0].x;
-		MY -= ViewportBounds[0].y;
-		glm::vec2 ViewportSize = ViewportBounds[1] - ViewportBounds[0];
-		MY = ViewportSize.y - MY;
+			auto [MX, MY] = ImGui::GetMousePos();
+			MX -= ViewportBounds[0].x;
+			MY -= ViewportBounds[0].y;
+			glm::vec2 ViewportSize = ViewportBounds[1] - ViewportBounds[0];
+			MY = ViewportSize.y - MY;
 
-		int MouseX = static_cast<int>(MX);
-		int MouseY = static_cast<int>(MY);
-		if (MouseX >= 0 && MouseY >= 0 && MouseX < static_cast<int>(ViewportSize.x) && MouseY < static_cast<int>(ViewportSize.y))
-		{
-			int PixelData = FrameBuffer->ReadPixel(1, MouseX, MouseY);
-			PE_CORE_LOG("Mouse = {0}, {1} | Data: {2}", MouseX, MouseY, PixelData);
+			// Update mouse hovered entity
+			const int MouseX = static_cast<int>(MX);
+			const int MouseY = static_cast<int>(MY);
+			if (MouseX >= 0 && MouseY >= 0 && MouseX < static_cast<int>(ViewportSize.x) && MouseY < static_cast<int>(ViewportSize.y))
+			{
+				const int PixelData = FrameBuffer->ReadPixel(1, MouseX, MouseY);
+				HoveredEntity = CEntity(static_cast<entt::entity>(PixelData), ActiveScene.get());
+			}
 		}
 
 		FrameBuffer->Unbind();
@@ -145,6 +146,7 @@ namespace Parasite
 
 		CEventDispatcher Dispatcher(InEvent);
 		Dispatcher.Dispatch<CPressedKeyEvent>(PE_BIND_EVENT_FUNC(CEditorLayer::OnKeyPressed));
+		Dispatcher.Dispatch<CMousePressedEvent>(PE_BIND_EVENT_FUNC(CEditorLayer::OnMousePressed));
 	}
 
 	void CEditorLayer::DrawGizmos()
@@ -261,6 +263,16 @@ namespace Parasite
 			}
 			break;
 		}
+		}
+		return false;
+	}
+
+	bool CEditorLayer::OnMousePressed(CMousePressedEvent& InEvent)
+	{
+		if (InEvent.GetMouseButton() == 0 && CanMousePick())
+		{
+			HierarchyPanel.SetSelectedContext(HoveredEntity);
+			return true;
 		}
 		return false;
 	}
@@ -484,5 +496,10 @@ namespace Parasite
 	ImVec4 CEditorLayer::ToImVec4(const SColour& InColour)
 	{
 		return ImVec4(InColour.R, InColour.G, InColour.B, InColour.A);
+	}
+
+	bool CEditorLayer::CanMousePick() const
+	{
+		return bViewportHovered && !(ImGuizmo::IsUsing() || ImGuizmo::IsOver());
 	}
 }

@@ -62,6 +62,11 @@ namespace Parasite
 		ImGui::End();
 	}
 
+	void CSceneHierarchyPanel::SetSelectedContext(CEntity InEntity)
+	{
+		SelectionContext = InEntity;
+	}
+
 	void CSceneHierarchyPanel::DrawEntityNode(CEntity InEntity)
 	{
 		auto& Tag = InEntity.GetComponent<STagComponent>().Tag;

@@ -28,6 +28,7 @@ namespace Parasite
 		void DrawGizmos();
 
 		bool OnKeyPressed(CPressedKeyEvent& InEvent);
+		bool OnMousePressed(CMousePressedEvent& InEvent);
 
 		void NewScene();
 		void OpenScene();
@@ -39,6 +40,8 @@ namespace Parasite
 
 		void ApplyEditorTheme();
 		ImVec4 ToImVec4(const SColour& InColour);
+
+		bool CanMousePick() const;
 
 	private:
 		COrthographicCameraController Camera;
@@ -58,6 +61,8 @@ namespace Parasite
 
 		CSceneHierarchyPanel HierarchyPanel;
 		CEditorSettingsPanel EditorSettingsPanel;
+
+		CEntity HoveredEntity;
 
 		SEditorSettings EditorStyle;
 		std::string SettingsPath = "EditorSettings.peconfig";
