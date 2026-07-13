@@ -50,4 +50,19 @@ namespace Parasite
 		}
 		return std::string();
 	}
+
+	void CFileDialogs::OpenFolder(const std::filesystem::path& InPath)
+	{
+		std::wstring command = L"explorer.exe \"" + InPath.wstring() + L"\"";
+
+		STARTUPINFOW si{};
+		PROCESS_INFORMATION pi{};
+		si.cb = sizeof(si);
+
+		CreateProcessW(nullptr, command.data(), nullptr, nullptr, FALSE, 0,
+			nullptr, nullptr, &si, &pi);
+
+		CloseHandle(pi.hProcess);
+		CloseHandle(pi.hThread);
+	}
 }

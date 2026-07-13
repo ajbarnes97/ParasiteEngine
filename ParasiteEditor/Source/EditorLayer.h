@@ -4,9 +4,11 @@
 #include "ParasiteEngine/Core/Timestep.h"
 #include "ParasiteEngine/Events/Event.h"
 #include "ParasiteEngine/Renderer/CameraController.h"
+#include "ParasiteEngine/Renderer/EditorCamera.h"
+
+#include "Panels/ContentBrowserPanel.h"
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/EditorSettingsPanel.h"
-#include "ParasiteEngine/Renderer/EditorCamera.h"
 
 
 namespace Parasite
@@ -59,6 +61,7 @@ namespace Parasite
 
 		int GizmoType = INDEX_NONE;
 
+		CContentBrowserPanel ContentBrowserPanel;
 		CSceneHierarchyPanel HierarchyPanel;
 		CEditorSettingsPanel EditorSettingsPanel;
 

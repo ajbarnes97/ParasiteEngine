@@ -129,6 +129,7 @@ namespace Parasite
 
 		DrawMainMenuBar();
 
+		ContentBrowserPanel.OnImGuiRender();
 		EditorSettingsPanel.OnImGuiRender();
 		HierarchyPanel.OnImGuiRender();
 
