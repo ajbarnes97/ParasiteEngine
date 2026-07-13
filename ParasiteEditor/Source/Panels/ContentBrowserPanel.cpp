@@ -5,50 +5,144 @@
 #include "ParasiteEngine/Utils/PlatformUtils.h"
 
 #include "ImGui/imgui.h"
+#include "ImGui/imgui_internal.h"
+#include "glm/gtc/type_ptr.hpp"
 
 
 namespace Parasite
 {
 	// todo: should be based on projects dir
-	static const std::filesystem::path AssetPath = "Assets";
+	extern const std::filesystem::path AssetPath = "Assets";
 
 	CContentBrowserPanel::CContentBrowserPanel()
 	{
 		CurrentDirectory = AssetPath;
 		InputDirectory = CurrentDirectory.string();
+		NavHistory.push_back(CurrentDirectory);
+		HistoryIndex = 0;
 
 		FolderIcon = CTexture2D::Create("Resources/Icons/folder.png");
 		FileIcon = CTexture2D::Create("Resources/Icons/file.png");
 		SettingsIcon = CTexture2D::Create("Resources/Icons/settings.png");
+		ArrowIcon = CTexture2D::Create("Resources/Icons/arrow.png");
 	}
 
 	void CContentBrowserPanel::OnImGuiRender()
 	{
-		ImGui::Begin("Content Browser");
+		ImGui::Begin("ContentBrowser");
+		ImGui::BeginTable("ContentBrowser", 2, ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersInnerV);
 
-		if (CurrentDirectory != AssetPath)
-		{
-			if (ImGui::Button("<-"))
-			{
-				CurrentDirectory = CurrentDirectory.parent_path();
-			}
-			ImGui::SameLine();
-		}
-
-		DrawDirectoryBox();
+		ImGui::TableSetupColumn("DirectoryView", ImGuiTableColumnFlags_WidthFixed, 250.0f);
+		ImGui::TableSetupColumn("Content");
+		
+		DrawDirectoryListView();
+		DrawDirectoryHistory();
+		DrawDirectoryInputBox();
 		DrawSettingsContextMenu();
 		DrawThumbnails();
 
+		ImGui::EndTable();
 		ImGui::End();
 	}
 
-	void CContentBrowserPanel::DrawDirectoryBox()
+	void CContentBrowserPanel::DrawDirectoryListView()
+	{
+		ImGui::TableNextColumn();
+		ImGui::BeginChild("DirectoryPanel", ImVec2(0, 0), false);
+
+		ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_FramePadding;
+
+		if (ImGui::TreeNodeEx("Content", TreeNodeFlags))
+		{
+			DrawDirectoryTreeFromPath(AssetPath, true);
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNodeEx("Favorites", TreeNodeFlags))
+		{
+			ImGui::TreePop();
+		}
+		ImGui::EndChild();
+	}
+
+	void CContentBrowserPanel::DrawDirectoryTreeFromPath(const std::filesystem::path& InPath, bool bInExpandRoot)
+	{
+		bool bHasChildren = false;
+		for (const auto& DirEntry : std::filesystem::directory_iterator(InPath))
+		{
+			if (DirEntry.is_directory())
+			{
+				bHasChildren = true;
+				break;
+			}
+		}
+
+		ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_OpenOnArrow;
+		if (!bHasChildren)
+		{
+			TreeNodeFlags |= ImGuiTreeNodeFlags_Leaf;
+		}
+		else if (bInExpandRoot)
+		{
+			TreeNodeFlags |= ImGuiTreeNodeFlags_DefaultOpen;
+		}
+
+		if (CurrentDirectory == InPath)
+		{
+			TreeNodeFlags |= ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_DefaultOpen;
+		}
+
+		const bool bOpen = ImGui::TreeNodeEx(InPath.filename().string().c_str(), TreeNodeFlags);
+		if (ImGui::IsItemClicked())
+		{
+			NavigateTo(InPath);
+		}
+		DrawFolderContextMenu(InPath);
+
+		if (bOpen)
+		{
+			for (const auto& DirEntry : std::filesystem::directory_iterator(InPath))
+			{
+				if (DirEntry.is_directory())
+				{
+					DrawDirectoryTreeFromPath(DirEntry.path());
+				}
+			}
+			ImGui::TreePop();
+		}
+	}
+
+	void CContentBrowserPanel::DrawDirectoryHistory()
+	{
+		ImGui::TableNextColumn();
+
+		constexpr float ButtonSize = 16.0f;
+		if (ImGui::ImageButton("NavPrevious", ArrowIcon->GetRendererID(), { ButtonSize, ButtonSize }))
+		{
+			if (CanGoBack())
+			{
+				HistoryIndex--;
+				NavigateTo(NavHistory[HistoryIndex]);
+			}
+		}
+		ImGui::SameLine();
+		ImGui::AlignTextToFramePadding();
+		if (ImGui::ImageButton("NavNext", ArrowIcon->GetRendererID(), { ButtonSize, ButtonSize }, { 1, 0 }, { 0, 1 }))
+		{
+			if (CanGoForward())
+			{
+				HistoryIndex++;
+				NavigateTo(NavHistory[HistoryIndex]);
+			}
+		}
+	}
+
+	void CContentBrowserPanel::DrawDirectoryInputBox()
 	{
 		char Buffer[512];
 		memset(Buffer, 0, sizeof(Buffer));
 		strcpy_s(Buffer, InputDirectory.string().c_str());
 
-		ImGui::TextUnformatted("Directory");
 		ImGui::SameLine();
 		if (ImGui::InputText("##Directory", Buffer, sizeof(Buffer), ImGuiInputTextFlags_EnterReturnsTrue))
 		{
@@ -91,14 +185,12 @@ namespace Parasite
 		{
 			ImGui::SliderFloat("Thumbnail Size", &ThumbnailSize, 16.0f, 256.0f);
 			ImGui::SliderFloat("Padding", &Padding, 16.0f, 256.0f);
-
 			ImGui::Separator();
 			
 			if (ImGui::MenuItem("Show in Explorer"))
 			{
 				CFileDialogs::OpenFolder(CurrentDirectory);
 			}
-
 			ImGui::Separator();
 
 			if (ImGui::MenuItem("Copy Path"))
@@ -114,35 +206,92 @@ namespace Parasite
 	{
 		const float CellSize = Padding + ThumbnailSize;
 		const float PanelWidth = ImGui::GetContentRegionAvail().x;
-		const int ColumnCount = static_cast<int>(PanelWidth / CellSize);
+		const int ColumnCount = std::max(1, static_cast<int>(PanelWidth / CellSize));
 
-		ImGui::Columns(ColumnCount <= 0 ? 1 : ColumnCount, 0, false);
-		for (auto& DirEntry : std::filesystem::directory_iterator(CurrentDirectory))
+		if (ImGui::BeginTable("ContentBrowserGrid", ColumnCount, ImGuiTableFlags_SizingFixedFit))
 		{
-			const auto& Path = DirEntry.path();
-			auto RelativePath = std::filesystem::relative(Path, AssetPath);
-			std::string FilenameString = RelativePath.filename().string();
-
-			const bool bIsDirectory = DirEntry.is_directory();
-
-			// todo: have different icons for different file extensions
-			ImTextureID TextureID = bIsDirectory ? FolderIcon->GetRendererID() : FileIcon->GetRendererID();
-			ImGui::ImageButton(FilenameString.c_str(), TextureID, { ThumbnailSize, ThumbnailSize }, { 0, 1 }, { 1,0 });
-			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+			for (auto& DirEntry : std::filesystem::directory_iterator(CurrentDirectory))
 			{
+				ImGui::TableNextColumn();
+
+				const auto& Path = DirEntry.path();
+				auto RelativePath = std::filesystem::relative(Path, AssetPath);
+				std::string FilenameString = RelativePath.filename().string();
+				ImGui::PushID(FilenameString.c_str());
+
+				const bool bIsDirectory = DirEntry.is_directory();
+				ImTextureID TextureID = bIsDirectory ? FolderIcon->GetRendererID() : FileIcon->GetRendererID();
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+				ImGui::ImageButton(FilenameString.c_str(), TextureID, { ThumbnailSize, ThumbnailSize }, { 0, 1 }, { 1, 0 });
+
+				if (ImGui::BeginDragDropSource())
+				{
+					const wchar_t* ItemPath = RelativePath.c_str(); 
+					ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", ItemPath, (wcslen(ItemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
+					ImGui::EndDragDropSource();
+				}
+
+				ImGui::PopStyleColor();
+
+				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+				{
+					if (bIsDirectory)
+					{
+						NavigateTo(CurrentDirectory / Path.filename());
+					}
+					else
+					{
+						// TODO: Open asset
+					}
+				}
+
 				if (bIsDirectory)
 				{
-					CurrentDirectory /= Path.filename();
-					InputDirectory /= Path.filename();
+					DrawFolderContextMenu(Path);
 				}
-				else
-				{
-					// todo: handle opening files
-				}
+
+				ImGui::TextWrapped("%s", FilenameString.c_str());
+				ImGui::PopID();
 			}
-			ImGui::Text(FilenameString.c_str());
-			ImGui::NextColumn();
+			ImGui::EndTable();
 		}
-		ImGui::Columns(1);
+	}
+
+	void CContentBrowserPanel::DrawFolderContextMenu(const std::filesystem::path& InPath)
+	{
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (ImGui::MenuItem("Show in Explorer"))
+			{
+				CFileDialogs::OpenFolder(InPath);
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Add To Favorites"))
+			{
+				// todo: save to editor settings
+			}
+			ImGui::EndPopup();
+		}
+	}
+
+	void CContentBrowserPanel::NavigateTo(const std::filesystem::path& InPath)
+	{
+		if (HistoryIndex >= 0 && NavHistory[HistoryIndex] == InPath)
+		{
+			CurrentDirectory = InPath;
+			InputDirectory = InPath;
+			return;
+		}
+
+		if (HistoryIndex + 1 < static_cast<int32_t>(NavHistory.size()))
+		{
+			NavHistory.erase(NavHistory.begin() + HistoryIndex + 1, NavHistory.end());
+		}
+
+		NavHistory.push_back(InPath);
+		HistoryIndex = static_cast<int32_t>(NavHistory.size()) - 1;
+
+		CurrentDirectory = InPath;
+		InputDirectory = InPath;
 	}
 }

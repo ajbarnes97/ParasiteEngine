@@ -15,6 +15,8 @@
 
 namespace Parasite
 {
+	extern const std::filesystem::path AssetPath;
+
 	CEditorLayer::CEditorLayer() : CLayer("Parasite Editor Layer")
 		, Camera(1.7777f, true)
 	{
@@ -289,13 +291,19 @@ namespace Parasite
 		std::string Filepath = CFileDialogs::OpenFile("Parasite Scene (*.pescene)\0*.pescene\0");
 		if (!Filepath.empty())
 		{
-			ActiveScene = MakeShared<CScene>();
-			HierarchyPanel.SetContext(ActiveScene);
-
-			CSceneSerializer SceneSerializer(ActiveScene);
-			SceneSerializer.Deserialize(Filepath);
-			ActiveSceneFilePath = Filepath;
+			std::filesystem::path Path = static_cast<std::filesystem::path>(Filepath);
+			OpenScene(Path);
 		}
+	}
+
+	void CEditorLayer::OpenScene(std::filesystem::path& InPath)
+	{
+		ActiveScene = MakeShared<CScene>();
+		HierarchyPanel.SetContext(ActiveScene);
+
+		CSceneSerializer SceneSerializer(ActiveScene);
+		SceneSerializer.Deserialize(InPath.string());
+		ActiveSceneFilePath = InPath.string();
 	}
 
 	void CEditorLayer::SaveScene()
@@ -382,6 +390,17 @@ namespace Parasite
 			Camera.ResizeBounds(ViewportSize.x, ViewportSize.y);
 		}
 		ImGui::Image((void*)(uintptr_t)FrameBuffer->GetColourAttachmentRendererID(), { ViewportSize.x, ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+			{
+				const wchar_t* Path = static_cast<const wchar_t*>(Payload->Data);
+				std::filesystem::path NewPath = AssetPath / static_cast<std::filesystem::path>(Path);
+				OpenScene(NewPath);
+			}
+			ImGui::EndDragDropTarget();
+		}
 
 		ImVec2 MinBounds = ImGui::GetWindowPos();
 		MinBounds.x += ViewportOffset.x;

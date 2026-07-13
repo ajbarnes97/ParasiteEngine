@@ -10,6 +10,8 @@
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/EditorSettingsPanel.h"
 
+#include "filesystem"
+
 
 namespace Parasite
 {
@@ -34,6 +36,7 @@ namespace Parasite
 
 		void NewScene();
 		void OpenScene();
+		void OpenScene(std::filesystem::path& InPath);
 		void SaveScene();
 		void SaveSceneAs();
 
