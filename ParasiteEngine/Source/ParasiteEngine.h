@@ -2,6 +2,9 @@
 
 /// For use by Parasite Engine applications
 
+// --- Reflection 
+#include "ReflectionCore.h"
+
 #include "ParasiteEngine/Core/Application.h"
 #include "ParasiteEngine/Core/Log.h"
 #include "ParasiteEngine/Core/Layer.h"

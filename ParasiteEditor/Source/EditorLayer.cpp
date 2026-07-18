@@ -30,16 +30,16 @@ namespace Parasite
 			CEditorSettingsSerializer::Save(SettingsPath, EditorStyle);
 		}
 
-		EditorSettingsPanel.OnStyleChanged = (
-			[this](const SColour& InColour)
-			{
-				ApplyEditorTheme();
-			});
-		EditorSettingsPanel.OnEditorSettingsApplied = (
-			[this](const SEditorSettings* InSettings)
-			{
-				CEditorSettingsSerializer::Save(SettingsPath, EditorStyle);
-			});
+		//EditorSettingsPanel.OnStyleChanged = (
+		//	[this](const SColour& InColour)
+		//	{
+		//		ApplyEditorTheme();
+		//	});
+		//EditorSettingsPanel.OnEditorSettingsApplied = (
+		//	[this](const SEditorSettings* InSettings)
+		//	{
+		//		CEditorSettingsSerializer::Save(SettingsPath, EditorStyle);
+		//	});
 
 		ApplyEditorTheme();
 

@@ -16,10 +16,8 @@ namespace Parasite
 
 		void OnImGuiRender();
 
-		void DrawCategoryAppearance();
-
 	public:
-		FOnColourChanged OnStyleChanged;
+		std::function<void(const SColour&)> OnStyleChanged;
 		std::function<void(const SEditorSettings*)> OnEditorSettingsApplied;
 
 	private:
