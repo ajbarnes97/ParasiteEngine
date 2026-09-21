@@ -309,7 +309,14 @@ namespace Parasite
 
 	void CRenderer2D::DrawSprite(const glm::mat4& InTransform, SSpriteRendererComponent& InSpriteComponent, int InEntityID)
 	{
-		DrawQuad(InTransform, InSpriteComponent.Colour, 1.0f, InEntityID);
+		if (InSpriteComponent.Texture)
+		{
+			DrawQuad(InTransform, InSpriteComponent.Texture, InSpriteComponent.Colour, InSpriteComponent.TilingFactor, InEntityID);
+		}
+		else
+		{
+			DrawQuad(InTransform, InSpriteComponent.Colour, 1.0f, InEntityID);
+		}
 	}
 
 	void CRenderer2D::FlushAndReset()

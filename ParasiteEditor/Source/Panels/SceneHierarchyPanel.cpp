@@ -6,9 +6,13 @@
 #include "ImGui/imgui_internal.h"
 #include "glm/gtc/type_ptr.hpp"
 
+#include "filesystem"
+
 
 namespace Parasite
 {
+	extern const std::filesystem::path AssetPath;
+
 	CSceneHierarchyPanel::CSceneHierarchyPanel(const TSharedPtr<CScene>& InScene)
 	{
 		SetContext(InScene);
@@ -347,6 +351,20 @@ namespace Parasite
 		DrawComponent<SSpriteRendererComponent>("Sprite Renderer Component", InEntity, [](auto& InComponent)
 		{
 			ImGui::ColorEdit4("Colour", glm::value_ptr(InComponent.Colour));
+
+			ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const wchar_t* Path = static_cast<const wchar_t*>(Payload->Data);
+					std::filesystem::path NewPath = AssetPath / static_cast<std::filesystem::path>(Path);
+					InComponent.Texture = CTexture2D::Create(NewPath.string());
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+			ImGui::DragFloat("Tiling Factor", &InComponent.TilingFactor, 0.1f, 0.0f, 100.0f);
 		});
 	}
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "ParasiteEngine/Renderer/Camera.h"
 #include "ParasiteEngine/Scene/ScriptableEntity.h"
+#include "ParasiteEngine/Renderer/Texture.h"
 
 #include "glm/ext/matrix_float4x4.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -56,6 +57,8 @@ namespace Parasite
 
 	public:
 		glm::vec4 Colour;
+		TSharedPtr<CTexture2D> Texture;
+		float TilingFactor = 1.0f;
 	};
 
 	struct SCameraComponent
