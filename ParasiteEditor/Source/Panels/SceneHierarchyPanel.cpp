@@ -352,18 +352,26 @@ namespace Parasite
 		{
 			ImGui::ColorEdit4("Colour", glm::value_ptr(InComponent.Colour));
 
-			ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
+			ImTextureID TexID = 0;
+			if (InComponent.Texture)
+			{
+				TexID = static_cast<ImTextureID>(InComponent.Texture->GetRendererID());
+			}
+
+			if (ImGui::ImageButton("Texture", TexID, ImVec2(50.0f, 50.0f)))
+			{
+				InComponent.Texture = nullptr;
+			}
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* Payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 				{
 					const wchar_t* Path = static_cast<const wchar_t*>(Payload->Data);
-					std::filesystem::path NewPath = AssetPath / static_cast<std::filesystem::path>(Path);
+					std::filesystem::path NewPath = AssetPath / Path;
 					InComponent.Texture = CTexture2D::Create(NewPath.string());
 				}
 				ImGui::EndDragDropTarget();
 			}
-
 			ImGui::DragFloat("Tiling Factor", &InComponent.TilingFactor, 0.1f, 0.0f, 100.0f);
 		});
 	}

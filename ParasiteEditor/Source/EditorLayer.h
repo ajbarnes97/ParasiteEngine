@@ -29,6 +29,8 @@ namespace Parasite
 		virtual void OnEvent(CEvent& InEvent) override;
 
 	private:
+		void DrawToolBar();
+
 		void DrawGizmos();
 
 		bool OnKeyPressed(CPressedKeyEvent& InEvent);
@@ -39,6 +41,9 @@ namespace Parasite
 		void OpenScene(std::filesystem::path& InPath);
 		void SaveScene();
 		void SaveSceneAs();
+
+		void OnScenePlay();
+		void OnSceneStop();
 
 		void DrawMainMenuBar();
 		void DrawViewport();
@@ -72,5 +77,14 @@ namespace Parasite
 
 		SEditorSettings EditorStyle;
 		std::string SettingsPath = "EditorSettings.peconfig";
+
+		enum class ESceneState
+		{
+			Edit,
+			Play
+		};
+		ESceneState SceneState = ESceneState::Edit;
+
+		TSharedPtr<CTexture2D> PlayIcon, StopIcon;
 	};
 }

@@ -20,6 +20,7 @@ namespace Parasite
 	CEditorLayer::CEditorLayer() : CLayer("Parasite Editor Layer")
 		, Camera(1.7777f, true)
 	{
+		GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 	}
 
 	void CEditorLayer::OnAttach()
@@ -49,6 +50,9 @@ namespace Parasite
 		Specification.Height = 720;
 
 		FrameBuffer = CFrameBuffer::Create(Specification);
+
+		PlayIcon = CTexture2D::Create("Resources/Icons/play.png");
+		StopIcon = CTexture2D::Create("Resources/Icons/stop.png");
 
 		EditorCamera = CEditorCamera(30.0f, 1.7777f, 0.1f, 1000.0f);
 	}
@@ -138,6 +142,8 @@ namespace Parasite
 		DrawViewport();
 		DrawGizmos();
 
+		DrawToolBar();
+
 		ImGui::End();
 		ImGui::PopStyleVar();
 	}
@@ -150,6 +156,26 @@ namespace Parasite
 		CEventDispatcher Dispatcher(InEvent);
 		Dispatcher.Dispatch<CPressedKeyEvent>(PE_BIND_EVENT_FUNC(CEditorLayer::OnKeyPressed));
 		Dispatcher.Dispatch<CMousePressedEvent>(PE_BIND_EVENT_FUNC(CEditorLayer::OnMousePressed));
+	}
+
+	void CEditorLayer::DrawToolBar()
+	{
+		ImGui::Begin("##Toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+		TSharedPtr<CTexture2D> ButtonIcon = SceneState == ESceneState::Edit ? PlayIcon : StopIcon;
+		ImTextureID TextureID = static_cast<ImTextureID>(ButtonIcon->GetRendererID());
+		float ButtonSize = ImGui::GetWindowHeight() - 5.0f;
+		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (ButtonSize * 0.5f));
+		if (ImGui::ImageButton("#ToolbarSceneBtn", TextureID, ImVec2(ButtonSize, ButtonSize), ImVec2(0, 0), ImVec2(1, 1)))
+		{
+			switch (SceneState)
+			{
+			case ESceneState::Edit: OnScenePlay(); break;
+			case ESceneState::Play: OnSceneStop(); break;
+			default: break;
+			}
+		}
+		ImGui::End();
 	}
 
 	void CEditorLayer::DrawGizmos()
@@ -215,11 +241,6 @@ namespace Parasite
 
 		switch (InEvent.GetKeyCode())
 		{
-		case PE_KEY_Q:
-		{
-			GizmoType = INDEX_NONE;
-			break;
-		}
 		case PE_KEY_W:
 		{
 			GizmoType = ImGuizmo::OPERATION::TRANSLATE;
@@ -324,6 +345,16 @@ namespace Parasite
 			CSceneSerializer SceneSerializer(ActiveScene);
 			SceneSerializer.Serialize(Filepath);
 		}
+	}
+
+	void CEditorLayer::OnScenePlay()
+	{
+		SceneState = ESceneState::Play;
+	}
+
+	void CEditorLayer::OnSceneStop()
+	{
+		SceneState = ESceneState::Edit;
 	}
 
 	void CEditorLayer::DrawMainMenuBar()

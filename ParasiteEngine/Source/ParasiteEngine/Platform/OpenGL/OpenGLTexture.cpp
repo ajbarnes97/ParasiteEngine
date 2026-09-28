@@ -40,7 +40,7 @@ namespace Parasite
 		glTextureStorage2D(RendererID, 1, OpenGLFormat, Width, Height);
 
 		glTextureParameteri(RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(RendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		glTextureParameteri(RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -60,7 +60,7 @@ namespace Parasite
 		glTextureStorage2D(RendererID, 1, InternalFormat, Width, Height);
 
 		glTextureParameteri(RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(RendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		glTextureParameteri(RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);

@@ -15,7 +15,7 @@ namespace Parasite
 		glm::vec3 Position;
 		glm::vec4 Colour;
 		glm::vec2 TexCoord;
-		float TexIndex;
+		int TexIndex;
 		float TilingFactor;
 
 		// Editor-Only
@@ -56,7 +56,7 @@ namespace Parasite
 				{ EShaderDataType::Float3,	"a_Position" },
 				{ EShaderDataType::Float4,	"a_Colour" },
 				{ EShaderDataType::Float2,	"a_TexCoord" },
-				{ EShaderDataType::Float,	"a_TexIndex" },
+				{ EShaderDataType::Int,	"a_TexIndex" },
 				{ EShaderDataType::Float,	"a_TilingFactor" },
 				{ EShaderDataType::Int,		"a_EntityID" },
 			}
@@ -256,21 +256,21 @@ namespace Parasite
 		}
 
 		constexpr size_t QuadVertexCount = 4;
-		float TextureIndex = 0.0f;
+		int TextureIndex = 0;
 		constexpr glm::vec2 TextureCoords[] = { {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f} };
 
 		for (uint32_t Index = 1; Index < Data.TextureSlotIndex; Index++)
 		{
 			if (*Data.TextureSlots[Index].get() == *InTexture.get())
 			{
-				TextureIndex = static_cast<float>(Index);
+				TextureIndex = Index;
 				break;
 			}
 		}
 
 		if (TextureIndex == 0.0f)
 		{
-			TextureIndex = static_cast<float>(Data.TextureSlotIndex);
+			TextureIndex = Data.TextureSlotIndex;
 			Data.TextureSlots[Data.TextureSlotIndex] = InTexture;
 			Data.TextureSlotIndex++;
 		}
